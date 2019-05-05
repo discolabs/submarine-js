@@ -1,6 +1,6 @@
 {
-  "name": "submarine-js",
-  "version": "0.0.2",
+  "name": "@discolabs/submarine-js",
+  "version": "0.0.3",
   "description": "Javascript client library for Submarine.",
   "main": "index.js",
   "author": "Gavin Ballard",
@@ -11,5 +11,8 @@
   "keywords": [
     "submarine",
     "shopify"
-  ]
+  ],
+  "dependencies": {
+    "@discolabs/custard-js": "0.0.2"
+  }
 }
