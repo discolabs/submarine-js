@@ -1,6 +1,6 @@
 {
   "name": "submarine-js",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Javascript client library for Submarine.",
   "main": "index.js",
   "author": "Gavin Ballard",
