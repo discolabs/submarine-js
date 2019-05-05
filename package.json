@@ -1,4 +1,15 @@
 {
   "name": "submarine-js",
-  "version": "0.0.1"
+  "version": "0.0.1",
+  "description": "Javascript client library for Submarine.",
+  "main": "index.js",
+  "author": "Gavin Ballard",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/discolabs/submarine-js.git"
+  },
+  "keywords": [
+    "submarine",
+    "shopify"
+  ]
 }
