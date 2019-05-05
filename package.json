@@ -1,5 +1,5 @@
 {
-  "name": "submarine-js",
+  "name": "@discolabs/submarine-js",
   "version": "0.0.2",
   "description": "Javascript client library for Submarine.",
   "main": "index.js",
@@ -11,5 +11,8 @@
   "keywords": [
     "submarine",
     "shopify"
-  ]
+  ],
+  "dependencies": {
+    "@discolabs/custard-js": "0.0.2"
+  }
 }

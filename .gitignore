@@ -1,6 +1,16 @@
-# Editors
+# IDE & OS specific
+.DS_Store
 .idea
-.vscode
 
-# Libraries
-/node_modules
+# Logs
+logs
+*.log
+
+# Dependencies
+node_modules
+
+# Coverage
+coverage
+
+# Release
+lib
