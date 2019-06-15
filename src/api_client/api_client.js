@@ -27,6 +27,10 @@ const API_METHODS = {
     http_method: 'get',
     endpoint: '/products.json'
   },
+  generate_client_token: {
+    http_method: 'post',
+    endpoint: '/client_tokens.json'
+  },
   create_preliminary_payment_method: {
     http_method: 'post',
     endpoint: '/preliminary_payment_methods.json'
@@ -137,6 +141,10 @@ export class ApiClient {
   cancelSubscription(id, callback) {
     const context = Object.assign({}, this.context, { id });
     return this.execute('cancel_subscription', {}, context, callback);
+  }
+
+  generateClientToken(payment_processor, callback) {
+    return this.execute('generate_client_token', { payment_processor }, this.context, callback);
   }
 
   createPreliminaryPaymentMethod(preliminary_payment_method, callback) {
