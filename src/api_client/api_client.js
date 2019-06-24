@@ -27,9 +27,9 @@ const API_METHODS = {
     http_method: 'get',
     endpoint: '/products.json'
   },
-  generate_client_token: {
+  generate_payment_processor_client_token: {
     http_method: 'post',
-    endpoint: '/client_tokens.json'
+    endpoint: '/payment_processor_client_tokens.json'
   },
   create_preliminary_payment_method: {
     http_method: 'post',
@@ -143,8 +143,9 @@ export class ApiClient {
     return this.execute('cancel_subscription', {}, context, callback);
   }
 
-  generateClientToken(payment_processor, callback) {
-    return this.execute('generate_client_token', { payment_processor }, this.context, callback);
+  generatePaymentProcessorClientToken(payment_processor, callback) {
+    const payload = { data: { type: 'payment_processor_client_token', attributes: { payment_processor } } };
+    return this.execute('generate_payment_processor_client_token', payload, this.context, callback);
   }
 
   createPreliminaryPaymentMethod(preliminary_payment_method, callback) {
