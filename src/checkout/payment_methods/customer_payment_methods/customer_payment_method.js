@@ -2,6 +2,10 @@ import SubmarinePaymentMethod from "../submarine_payment_method";
 
 export class CustomerPaymentMethod extends SubmarinePaymentMethod {
 
+  getValue() {
+    return `customer_payment_method_${this.data.id}`;
+  }
+
   getRenderContext() {
     let title = null;
     let icon = null;
@@ -20,6 +24,7 @@ export class CustomerPaymentMethod extends SubmarinePaymentMethod {
     return {
       id: this.data.id,
       title: title,
+      value: this.getValue(),
       icon: icon,
       icon_description: icon_description
     }

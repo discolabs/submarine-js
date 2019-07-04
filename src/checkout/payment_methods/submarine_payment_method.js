@@ -24,6 +24,7 @@ export default class SubmarinePaymentMethod {
     success(true);
   }
 
+  getValue() { return null; }
   getRenderContext() { return {} }
   getRenderTemplate() { return null; }
 

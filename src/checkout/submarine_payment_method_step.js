@@ -162,7 +162,18 @@ export class SubmarinePaymentMethodStep extends CustardModule {
   }
 
   onFormSubmit(e) {
-    if(this.$form.attr('data-form-submit') === 'ok') {
+    // If we've flagged the form as okay to submit, submit as normal.
+    if(this.$form.attr('data-form-submarine-submit') === 'ok') {
+      return true;
+    }
+
+    // Find the currently selected payment method.
+    const selectedPaymentMethod = this.paymentMethods.find((paymentMethod) => {
+      return this.selectedSubmarinePaymentMethod === paymentMethod.getValue();
+    });
+
+    // If there isn't a currently selected payment method, submit as normal.
+    if(!selectedPaymentMethod) {
       return true;
     }
 
@@ -170,14 +181,14 @@ export class SubmarinePaymentMethodStep extends CustardModule {
     this.startLoading();
 
     // Validate the payment method. If invalid, bail out.
-    const validationErrors = this.selectedPaymentMethod.validate();
+    const validationErrors = selectedPaymentMethod.validate();
     if(validationErrors.length) {
       this.stopLoading();
       return;
     }
 
     // Perform processing.
-    this.selectedPaymentMethod.process({
+    selectedPaymentMethod.process({
       success: this.onPaymentMethodProcessingSuccess.bind(this),
       error: this.onPaymentMethodProcessingError.bind(this)
     });
@@ -187,7 +198,7 @@ export class SubmarinePaymentMethodStep extends CustardModule {
     payment_method_data.checkout_id = this.options.checkout.id;
     this.submarine.api.createPreliminaryPaymentMethod({ preliminary_payment_method: payment_method_data }, (result) => {
       if(result.success) {
-        this.$form.attr('data-form-submit', 'ok');
+        this.$form.attr('data-form-submarine-submit', 'ok');
         this.$form.submit();
       }
     });

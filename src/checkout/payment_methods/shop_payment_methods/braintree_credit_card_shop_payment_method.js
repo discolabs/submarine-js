@@ -64,6 +64,17 @@ export class BraintreeCreditCardShopPaymentMethod extends ShopPaymentMethod {
     };
   }
 
+  validate() {
+    const state = this.hostedFieldsInstance.getState();
+    let errors = [];
+    Object.keys(state.fields).forEach((key) => {
+      if(!state.fields[key].isValid) {
+        errors.push(key);
+      }
+    });
+    return errors;
+  }
+
   process(callbacks) {
     this.hostedFieldsInstance.tokenize((tokenizeError, payload) => {
       if(!tokenizeError) {
@@ -85,6 +96,7 @@ export class BraintreeCreditCardShopPaymentMethod extends ShopPaymentMethod {
     return {
       id: this.data.id,
       title: 'Credit card (save for later)',
+      value: this.getValue(),
       subfields_content: this.options.html_templates.braintree_credit_card_subfields_content,
       subfields_class: 'card-fields-container',
       icon: 'generic',
