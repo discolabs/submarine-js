@@ -1,7 +1,8 @@
 import { CustardModule, STEP_PAYMENT_METHOD } from "@discolabs/custard-js";
 
 import { Submarine } from "../submarine";
-import { CustomerPaymentMethod } from "./payment_methods/customer_payment_method";
+import { createShopPaymentMethod } from "./payment_methods/shop_payment_methods";
+import { createCustomerPaymentMethod } from "./payment_methods/customer_payment_methods";
 
 const SHOPIFY_PAYMENT_METHOD_INPUT_SELECTOR = '[name="checkout[payment_gateway]"]';
 const SUBMARINE_PAYMENT_METHOD_INPUT_SELECTOR = '[name="checkout[attributes][_payment_method]"]';
@@ -81,13 +82,13 @@ export class SubmarinePaymentMethodStep extends CustardModule {
 
   getCustomerPaymentMethods() {
     return this.options.submarine.customer_payment_methods.data.map((customer_payment_method) => {
-      return new CustomerPaymentMethod(this.options, customer_payment_method);
+      return createCustomerPaymentMethod(this.options, customer_payment_method);
     });
   }
 
   getShopPaymentMethods() {
     return this.options.submarine.shop_payment_methods.data.map((shop_payment_method) => {
-      return ShopPaymentMethod(shop_payment_method, this.options);
+      return createShopPaymentMethod(this.options, shop_payment_method);
     });
   }
 
@@ -119,10 +120,14 @@ export class SubmarinePaymentMethodStep extends CustardModule {
       this.$submarineGatewayLabel.click();
     }
 
-    // Ensure the appropriate subfield element is rendered for the selected method.
+    // Ensure the appropriate subfield element is shown for the selected Submarine payment method.
+    this.updateSubfields($selectedSubmarinePaymentMethodInput, $selectedSubmarinePaymentMethodElement);
+  }
+
+  updateSubfields($selectedSubmarinePaymentMethodInput, $selectedSubmarinePaymentMethodElement) {
     this.$element.find('[data-subfields-for-payment-method]').each((index, subfields) => {
       const $subfields = this.$(subfields);
-      const isSubfieldElementForSelectedSubmarinePaymentMethod = $selectedSubmarinePaymentMethodInput.length && ($selectedSubmarinePaymentMethodElement.attr('data-select-payment-method') === $subfields.attr('data-subfields-for-payment-method'));
+      const isSubfieldElementForSelectedSubmarinePaymentMethod = $selectedSubmarinePaymentMethodInput && $selectedSubmarinePaymentMethodInput.length && ($selectedSubmarinePaymentMethodElement.attr('data-select-payment-method') === $subfields.attr('data-subfields-for-payment-method'));
       $subfields.toggle(isSubfieldElementForSelectedSubmarinePaymentMethod);
     });
   }

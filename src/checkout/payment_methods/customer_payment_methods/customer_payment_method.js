@@ -1,4 +1,4 @@
-import SubmarinePaymentMethod from './submarine_payment_method';
+import SubmarinePaymentMethod from "../submarine_payment_method";
 
 export class CustomerPaymentMethod extends SubmarinePaymentMethod {
 
