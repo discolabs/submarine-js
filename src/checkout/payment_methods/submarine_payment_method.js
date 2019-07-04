@@ -7,12 +7,24 @@ const renderHtmlTemplate = (object, template_name, html_templates) => {
 
 export default class SubmarinePaymentMethod {
 
-  constructor(options, data) {
+  constructor($, options, data) {
+    this.$ = $;
     this.options = options;
     this.data = data;
   }
 
-  setup() {}
+  load() {
+    this.beforeSetup();
+    return new Promise(this.setup.bind(this));
+  }
+
+  beforeSetup() {}
+
+  setup(success, failure) {
+    success(true);
+  }
+
+  getValue() { return null; }
   getRenderContext() { return {} }
   getRenderTemplate() { return null; }
 

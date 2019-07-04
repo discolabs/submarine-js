@@ -1,10 +1,12 @@
 import { CustardModule, STEP_PAYMENT_METHOD } from "@discolabs/custard-js";
 
 import { Submarine } from "../submarine";
-import { CustomerPaymentMethod } from "./payment_methods/customer_payment_method";
+import { createShopPaymentMethod } from "./payment_methods/shop_payment_methods";
+import { createCustomerPaymentMethod } from "./payment_methods/customer_payment_methods";
 
-const SHOPIFY_PAYMENT_METHOD_INPUT_SELECTOR = '[name="checkout[payment_gateway]"]';
+const SHOPIFY_GATEWAY_INPUT_SELECTOR = '[name="checkout[payment_gateway]"]';
 const SUBMARINE_PAYMENT_METHOD_INPUT_SELECTOR = '[name="checkout[attributes][_payment_method]"]';
+const SUBMARINE_SUBFIELDS_ELEMENT_SELECTOR = '[data-subfields-for-payment-method]';
 
 export class SubmarinePaymentMethodStep extends CustardModule {
 
@@ -26,7 +28,6 @@ export class SubmarinePaymentMethodStep extends CustardModule {
 
     this.$submarineGateway = this.$element.find(`[data-select-gateway="${this.options.submarine.submarine_gateway_id}"]`);
     this.$submarineGatewayLabel = this.$submarineGateway.find(`label[for="checkout_payment_gateway_${this.options.submarine.submarine_gateway_id}"]`);
-    this.$submarineGatewayInput = this.$submarineGateway.find(`[name="checkout[payment_gateway]"]`);
     this.$submarineGatewaySubfields = this.$element.find(`[data-subfields-for-gateway="${this.options.submarine.submarine_gateway_id}"]`);
 
     // If the Submarine Gateway isn't present on the page, we have naught to do.
@@ -34,13 +35,16 @@ export class SubmarinePaymentMethodStep extends CustardModule {
       return;
     }
 
+    // Define variables to store selected gateway and Submarine payment method.
+    this.selectedShopifyGatewayId = null;
+    this.selectedSubmarinePaymentMethod = null;
+
     // Ensure we have a Submarine instance configured.
     this.setupSubmarine();
 
     // Get a list of configured Submarine payment methods.
     // This includes saved customer payment methods, and also shop payment methods.
     this.paymentMethods = this.getPaymentMethods();
-    this.selectedPaymentMethod = this.paymentMethods[0];
 
     // Render Submarine payment method options.
     this.$submarineGateway.before(this.renderPaymentMethods());
@@ -49,22 +53,20 @@ export class SubmarinePaymentMethodStep extends CustardModule {
     this.$submarineGateway.hide();
     this.$submarineGatewaySubfields.remove();
 
-    // Get references to
-    // this.$shopifyPaymentMethodInputs = this.$element.find(SHOPIFY_PAYMENT_METHOD_INPUT_SELECTOR);
+    // Sort Shopify gateways and payment methods if so defined.
+    this.sortGatewaysAndPaymentMethods();
+
+    // Get references to the Submarine payment method inputs.
     this.$submarinePaymentMethodInputs = this.$element.find(SUBMARINE_PAYMENT_METHOD_INPUT_SELECTOR);
+    this.$submarinePaymentMethodSubfieldsElements = this.$element.find(SUBMARINE_SUBFIELDS_ELEMENT_SELECTOR);
 
     // Set up event listeners.
-    this.$element.on('change', SHOPIFY_PAYMENT_METHOD_INPUT_SELECTOR, this.onShopifyPaymentMethodChange.bind(this));
+    this.$element.on('change', SHOPIFY_GATEWAY_INPUT_SELECTOR, this.onShopifyGatewayChange.bind(this));
     this.$element.on('change', SUBMARINE_PAYMENT_METHOD_INPUT_SELECTOR, this.onSubmarinePaymentMethodChange.bind(this));
     this.$form.on('submit', this.onFormSubmit.bind(this));
 
-    // Perform setup for each gateway.
-    this.paymentMethods.forEach((paymentMethod) => {
-      paymentMethod.setup();
-    });
-
-    this.onShopifyPaymentMethodChange();
-    this.onSubmarinePaymentMethodChange();
+    // Start the (asynchronous) loading of each payment method.
+    this.loadPaymentMethods();
   }
 
   setupSubmarine() {
@@ -75,19 +77,41 @@ export class SubmarinePaymentMethodStep extends CustardModule {
     this.submarine = window.submarine;
   }
 
+  loadPaymentMethods() {
+    Promise.all(this.paymentMethods.map((paymentMethod) => {
+      return paymentMethod.load();
+    }))
+    .then(this.paymentMethodsSetupSuccess.bind(this))
+    .catch(this.paymentMethodsSetupFailure.bind(this))
+    .finally(this.paymentMethodsSetupComplete.bind(this))
+  }
+
+  paymentMethodsSetupSuccess(result) {
+    console.log('Successfully loaded Submarine payment methods.', result);
+  }
+
+  paymentMethodsSetupFailure(result) {
+    console.error('Could not load Submarine payment methods.', result);
+  }
+
+  paymentMethodsSetupComplete(result) {
+    this.onShopifyGatewayChange();
+    this.onSubmarinePaymentMethodChange();
+  }
+
   getPaymentMethods() {
     return [...this.getCustomerPaymentMethods(), ...this.getShopPaymentMethods()];
   }
 
   getCustomerPaymentMethods() {
     return this.options.submarine.customer_payment_methods.data.map((customer_payment_method) => {
-      return new CustomerPaymentMethod(this.options, customer_payment_method);
+      return createCustomerPaymentMethod(this.$, this.options, customer_payment_method);
     });
   }
 
   getShopPaymentMethods() {
     return this.options.submarine.shop_payment_methods.data.map((shop_payment_method) => {
-      return ShopPaymentMethod(shop_payment_method, this.options);
+      return createShopPaymentMethod(this.$, this.options, shop_payment_method);
     });
   }
 
@@ -97,38 +121,85 @@ export class SubmarinePaymentMethodStep extends CustardModule {
     }, '');
   }
 
-  onShopifyPaymentMethodChange() {
-    const $selectedShopifyPaymentMethodInput = this.$element.find(`${SHOPIFY_PAYMENT_METHOD_INPUT_SELECTOR}:checked`);
-    const $selectedShopifyPaymentMethodElement = $selectedShopifyPaymentMethodInput.closest('[data-select-gateway]');
-    const selectedShopifyPaymentGatewayId = $selectedShopifyPaymentMethodElement.attr('data-select-gateway');
+  onShopifyGatewayChange() {
+    const $selectedShopifyGatewayInput = this.$element.find(`${SHOPIFY_GATEWAY_INPUT_SELECTOR}:checked`);
+    const $selectedShopifyGatewayElement = $selectedShopifyGatewayInput.closest('[data-select-gateway]');
+    this.selectedShopifyGatewayId = $selectedShopifyGatewayElement.attr('data-select-gateway');
 
-    // If a non-Submarine payment method was selected, ensure Submarine payment methods are unselected.
-    if(selectedShopifyPaymentGatewayId !== this.options.submarine.submarine_gateway_id) {
+    // If the gateway that was selected isn't Submarine, ensure that Submarine payment methods are unselected.
+    if(!this.submarineGatewayIsSelected()) {
+      this.selectedSubmarinePaymentMethod = null;
       this.$submarinePaymentMethodInputs.each((index, submarinePaymentMethodInput) => {
         $(submarinePaymentMethodInput).prop('checked', false);
       });
     }
+
+    // Ensure Submarine subfields elements are hidden/shown as appropriate.
+    this.toggleSubmarineSubfieldsElements();
   }
 
   onSubmarinePaymentMethodChange() {
     const $selectedSubmarinePaymentMethodInput = this.$element.find(`${SUBMARINE_PAYMENT_METHOD_INPUT_SELECTOR}:checked`);
     const $selectedSubmarinePaymentMethodElement = $selectedSubmarinePaymentMethodInput.closest('[data-select-payment-method]');
+    this.selectedSubmarinePaymentMethod = $selectedSubmarinePaymentMethodElement.attr('data-select-payment-method');
 
     // If a Submarine payment method was selected, ensure the Shopify Submarine gateway is selected under the hood.
-    if($selectedSubmarinePaymentMethodInput.length) {
+    if(this.selectedSubmarinePaymentMethod !== undefined) {
       this.$submarineGatewayLabel.click();
     }
 
-    // Ensure the appropriate subfield element is rendered for the selected method.
-    this.$element.find('[data-subfields-for-payment-method]').each((index, subfields) => {
-      const $subfields = this.$(subfields);
-      const isSubfieldElementForSelectedSubmarinePaymentMethod = $selectedSubmarinePaymentMethodInput.length && ($selectedSubmarinePaymentMethodElement.attr('data-select-payment-method') === $subfields.attr('data-subfields-for-payment-method'));
-      $subfields.toggle(isSubfieldElementForSelectedSubmarinePaymentMethod);
+    // Ensure Submarine subfields elements are hidden/shown as appropriate.
+    this.toggleSubmarineSubfieldsElements();
+  }
+
+  toggleSubmarineSubfieldsElements() {
+    this.$submarinePaymentMethodSubfieldsElements.each((index, subfieldsElement) => {
+      const $subfieldsElement = this.$(subfieldsElement);
+      const isSubfieldsElementForSelectedSubmarinePaymentMethod = this.submarineGatewayIsSelected() &&  ($subfieldsElement.attr('data-subfields-for-payment-method') === this.selectedSubmarinePaymentMethod);
+      $subfieldsElement.toggle(isSubfieldsElementForSelectedSubmarinePaymentMethod);
     });
   }
 
+  submarineGatewayIsSelected() {
+    return this.selectedShopifyGatewayId === this.options.submarine.submarine_gateway_id;
+  }
+
+  sortGatewaysAndPaymentMethods() {
+    if(!this.options.submarine.payment_method_sort_order.length) { return; }
+    const $sortableContainer = this.$element.find('[data-select-gateway],[data-subfields-for-gateway],[data-select-payment-method],[data-subfields-for-payment-method]').parent();
+    let $sortableElements = $sortableContainer.children();
+    $sortableElements.detach();
+    $sortableElements = $sortableElements.sort((a, b) => {
+      const aSortIndex = this.getSortableElementSortIndex(a);
+      const bSortIndex = this.getSortableElementSortIndex(b);
+      console.log(a, aSortIndex, b, bSortIndex);
+      if(aSortIndex < bSortIndex) { return -1; }
+      if(aSortIndex > bSortIndex) { return 1; }
+      return 0;
+    });
+    $sortableContainer.html($sortableElements);
+  }
+
+  getSortableElementSortIndex(sortableElement) {
+    const $sortableElement = this.$(sortableElement);
+    const sortKey = $sortableElement.attr('data-select-gateway') || $sortableElement.attr('data-subfields-for-gateway') || $sortableElement.attr('data-select-payment-method') || $sortableElement.attr('data-subfields-for-payment-method');
+    const sortIndex = this.options.submarine.payment_method_sort_order.indexOf(sortKey);
+    return (sortIndex === -1) ? 999 : sortIndex;
+  }
+
   onFormSubmit(e) {
-    if(this.$form.attr('data-form-submit') === 'ok') {
+    // If we've flagged the form as okay to submit, submit as normal.
+    if(this.$form.attr('data-form-submarine-submit') === 'ok') {
+      return true;
+    }
+
+    // Find the currently selected payment method.
+    const selectedPaymentMethod = this.paymentMethods.find((paymentMethod) => {
+      return this.selectedSubmarinePaymentMethod === paymentMethod.getValue();
+    });
+
+    // If there isn't a currently selected payment method, submit as normal.
+    if(!selectedPaymentMethod) {
       return true;
     }
 
@@ -136,14 +207,14 @@ export class SubmarinePaymentMethodStep extends CustardModule {
     this.startLoading();
 
     // Validate the payment method. If invalid, bail out.
-    const validationErrors = this.selectedPaymentMethod.validate();
+    const validationErrors = selectedPaymentMethod.validate();
     if(validationErrors.length) {
       this.stopLoading();
       return;
     }
 
     // Perform processing.
-    this.selectedPaymentMethod.process({
+    selectedPaymentMethod.process({
       success: this.onPaymentMethodProcessingSuccess.bind(this),
       error: this.onPaymentMethodProcessingError.bind(this)
     });
@@ -153,7 +224,7 @@ export class SubmarinePaymentMethodStep extends CustardModule {
     payment_method_data.checkout_id = this.options.checkout.id;
     this.submarine.api.createPreliminaryPaymentMethod({ preliminary_payment_method: payment_method_data }, (result) => {
       if(result.success) {
-        this.$form.attr('data-form-submit', 'ok');
+        this.$form.attr('data-form-submarine-submit', 'ok');
         this.$form.submit();
       }
     });
