@@ -53,6 +53,9 @@ export class SubmarinePaymentMethodStep extends CustardModule {
     this.$submarineGateway.hide();
     this.$submarineGatewaySubfields.remove();
 
+    // Sort Shopify gateways and payment methods if so defined.
+    this.sortGatewaysAndPaymentMethods();
+
     // Get references to the Submarine payment method inputs.
     this.$submarinePaymentMethodInputs = this.$element.find(SUBMARINE_PAYMENT_METHOD_INPUT_SELECTOR);
     this.$submarinePaymentMethodSubfieldsElements = this.$element.find(SUBMARINE_SUBFIELDS_ELEMENT_SELECTOR);
@@ -159,6 +162,29 @@ export class SubmarinePaymentMethodStep extends CustardModule {
 
   submarineGatewayIsSelected() {
     return this.selectedShopifyGatewayId === this.options.submarine.submarine_gateway_id;
+  }
+
+  sortGatewaysAndPaymentMethods() {
+    if(!this.options.submarine.payment_method_sort_order.length) { return; }
+    const $sortableContainer = this.$element.find('[data-select-gateway],[data-subfields-for-gateway],[data-select-payment-method],[data-subfields-for-payment-method]').parent();
+    let $sortableElements = $sortableContainer.children();
+    $sortableElements.detach();
+    $sortableElements = $sortableElements.sort((a, b) => {
+      const aSortIndex = this.getSortableElementSortIndex(a);
+      const bSortIndex = this.getSortableElementSortIndex(b);
+      console.log(a, aSortIndex, b, bSortIndex);
+      if(aSortIndex < bSortIndex) { return -1; }
+      if(aSortIndex > bSortIndex) { return 1; }
+      return 0;
+    });
+    $sortableContainer.html($sortableElements);
+  }
+
+  getSortableElementSortIndex(sortableElement) {
+    const $sortableElement = this.$(sortableElement);
+    const sortKey = $sortableElement.attr('data-select-gateway') || $sortableElement.attr('data-subfields-for-gateway') || $sortableElement.attr('data-select-payment-method') || $sortableElement.attr('data-subfields-for-payment-method');
+    const sortIndex = this.options.submarine.payment_method_sort_order.indexOf(sortKey);
+    return (sortIndex === -1) ? 999 : sortIndex;
   }
 
   onFormSubmit(e) {
