@@ -15,11 +15,12 @@ const getCustomerPaymentMethodClass = (customerPaymentMethod) => {
  * Given a set of payment method options and a shop payment method type, return
  * an instantiated ShopPaymentMethod class.
  *
+ * @param $
  * @param options
  * @param customerPaymentMethod
  * @returns {CustomerPaymentMethod}
  */
-export const createCustomerPaymentMethod = (options, customerPaymentMethod) => {
+export const createCustomerPaymentMethod = ($, options, customerPaymentMethod) => {
   const customerPaymentMethodClass = getCustomerPaymentMethodClass(customerPaymentMethod);
-  return new customerPaymentMethodClass(options, customerPaymentMethod);
+  return new customerPaymentMethodClass($, options, customerPaymentMethod);
 };
