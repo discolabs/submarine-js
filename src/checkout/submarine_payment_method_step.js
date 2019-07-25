@@ -130,7 +130,7 @@ export class SubmarinePaymentMethodStep extends CustardModule {
     if(!this.submarineGatewayIsSelected()) {
       this.selectedSubmarinePaymentMethod = null;
       this.$submarinePaymentMethodInputs.each((index, submarinePaymentMethodInput) => {
-        $(submarinePaymentMethodInput).prop('checked', false);
+        this.$(submarinePaymentMethodInput).prop('checked', false);
       });
     }
 
