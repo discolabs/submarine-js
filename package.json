@@ -1,8 +1,8 @@
 {
   "name": "@discolabs/submarine-js",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Javascript client library for Submarine.",
-  "main": "index.js",
+  "main": "lib/index.js",
   "author": "Gavin Ballard",
   "repository": {
     "type": "git",
@@ -12,7 +12,16 @@
     "submarine",
     "shopify"
   ],
+  "scripts": {
+    "build": "./node_modules/@babel/cli/bin/babel.js -s inline -d lib src",
+    "prepublish": "npm run build"
+  },
   "dependencies": {
-    "@discolabs/custard-js": "0.0.2"
+    "@discolabs/custard-js": "0.0.3"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/plugin-transform-modules-commonjs": "^7.5.0"
   }
 }
