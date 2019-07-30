@@ -17,7 +17,7 @@
     "prepublish": "npm run build"
   },
   "dependencies": {
-    "@discolabs/custard-js": "0.0.2"
+    "@discolabs/custard-js": "0.0.3"
   },
   "devDependencies": {
     "@babel/cli": "^7.5.5",

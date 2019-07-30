@@ -178,10 +178,10 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
-"@discolabs/custard-js@0.0.2":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/@discolabs/custard-js/-/custard-js-0.0.2.tgz#53abc7baae86c45a5cd5b981a1901e93a14e607c"
-  integrity sha512-3x9tmnTRhR0u7TLfl/P+PwpVwVRwP2b+MVk8z/A4Uo6BRIkASdrBUczZci+ftH0KKbUKrsAFee67Ewhq7TjALA==
+"@discolabs/custard-js@0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@discolabs/custard-js/-/custard-js-0.0.3.tgz#68cf2d20743d451b03ffc0ef15187adef8133275"
+  integrity sha512-vuAW0onA9fMs1OW6QzGbWPEWsKhMkAp4MWCTKIdu1+xxNhhVXW7CFWLwhGK/fUR69cAv2Iobk/e7zctmdo6OXQ==
 
 abbrev@1:
   version "1.1.1"
