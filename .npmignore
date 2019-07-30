@@ -13,6 +13,7 @@ node_modules
 coverage
 
 # Sources, tests and builder files
+src
 builder
 test
 internals
