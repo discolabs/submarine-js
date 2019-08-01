@@ -6,6 +6,7 @@ import { createCustomerPaymentMethod } from "./payment_methods/customer_payment_
 
 const SHOPIFY_GATEWAY_INPUT_SELECTOR = '[name="checkout[payment_gateway]"]';
 const SUBMARINE_PAYMENT_METHOD_INPUT_SELECTOR = '[name="checkout[attributes][_payment_method]"]';
+const SUBMARINE_PAYMENT_METHOD_LABEL_SELECTOR = '[data-select-payment-method] label';
 const SUBMARINE_SUBFIELDS_ELEMENT_SELECTOR = '[data-subfields-for-payment-method]';
 
 export class SubmarinePaymentMethodStep extends CustardModule {
@@ -63,6 +64,7 @@ export class SubmarinePaymentMethodStep extends CustardModule {
     // Set up event listeners.
     this.$element.on('change', SHOPIFY_GATEWAY_INPUT_SELECTOR, this.onShopifyGatewayChange.bind(this));
     this.$element.on('change', SUBMARINE_PAYMENT_METHOD_INPUT_SELECTOR, this.onSubmarinePaymentMethodChange.bind(this));
+    this.$element.on('click', SUBMARINE_PAYMENT_METHOD_LABEL_SELECTOR, this.onSubmarinePaymentMethodLabelClick.bind(this));
     this.$form.on('submit', this.onFormSubmit.bind(this));
 
     // Start the (asynchronous) loading of each payment method.
@@ -150,6 +152,11 @@ export class SubmarinePaymentMethodStep extends CustardModule {
 
     // Ensure Submarine subfields elements are hidden/shown as appropriate.
     this.toggleSubmarineSubfieldsElements();
+  }
+
+  onSubmarinePaymentMethodLabelClick(e) {
+    const $label = this.$(e.target);
+    this.$(`#${$label.attr('for')}`).click();
   }
 
   toggleSubmarineSubfieldsElements() {
