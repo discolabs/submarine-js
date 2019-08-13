@@ -107,13 +107,13 @@ export class SubmarinePaymentMethodStep extends CustardModule {
 
   getCustomerPaymentMethods() {
     return this.options.submarine.customer_payment_methods.data.map((customer_payment_method) => {
-      return createCustomerPaymentMethod(this.$, this.options, customer_payment_method);
+      return createCustomerPaymentMethod(this.$, this.options, this.options.submarine.translations, customer_payment_method);
     });
   }
 
   getShopPaymentMethods() {
     return this.options.submarine.shop_payment_methods.data.map((shop_payment_method) => {
-      return createShopPaymentMethod(this.$, this.options, shop_payment_method);
+      return createShopPaymentMethod(this.$, this.options, this.options.submarine.translations, shop_payment_method);
     });
   }
 

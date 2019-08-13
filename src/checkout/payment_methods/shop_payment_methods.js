@@ -27,10 +27,11 @@ const getShopPaymentMethodClass = (shopPaymentMethod) => {
  *
  * @param $
  * @param options
+ * @param translations
  * @param shopPaymentMethod
  * @returns {ShopPaymentMethod}
  */
-export const createShopPaymentMethod = ($, options, shopPaymentMethod) => {
+export const createShopPaymentMethod = ($, options, translations, shopPaymentMethod) => {
   const shopPaymentMethodClass = getShopPaymentMethodClass(shopPaymentMethod);
-  return new shopPaymentMethodClass($, options, shopPaymentMethod);
+  return new shopPaymentMethodClass($, options, translations, shopPaymentMethod);
 };
