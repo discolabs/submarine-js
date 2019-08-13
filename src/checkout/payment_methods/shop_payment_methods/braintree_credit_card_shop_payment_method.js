@@ -50,15 +50,15 @@ export class BraintreeCreditCardShopPaymentMethod extends ShopPaymentMethod {
       fields: {
         number: {
           selector: '#braintree-credit-card-card-number',
-          placeholder: 'Card number'
+          placeholder: this.t('checkout.credit_card.number_placeholder')
         },
         expirationDate: {
           selector: '#braintree-credit-card-expiration-date',
-          placeholder: 'Expiration date (MM / YY)'
+          placeholder: this.t('checkout.credit_card.expiration_date_placeholder')
         },
         cvv: {
           selector: '#braintree-credit-card-cvv',
-          placeholder: 'Security code'
+          placeholder: this.t('checkout.credit_card.cvv_placeholder')
         }
       }
     };
@@ -95,12 +95,12 @@ export class BraintreeCreditCardShopPaymentMethod extends ShopPaymentMethod {
   getRenderContext() {
     return {
       id: this.data.id,
-      title: 'Credit card (save for later)',
+      title: this.t('payment_methods.shop_payment_methods.braintree.credit_card.title'),
       value: this.getValue(),
       subfields_content: this.options.html_templates.braintree_credit_card_subfields_content,
       subfields_class: 'card-fields-container',
       icon: 'generic',
-      icon_description: 'Credit card'
+      icon_description: this.t('payment_methods.shop_payment_methods.braintree.credit_card.icon_description')
     }
   }
 

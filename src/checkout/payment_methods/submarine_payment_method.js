@@ -5,11 +5,88 @@ const renderHtmlTemplate = (object, template_name, html_templates) => {
   }, html_templates[template_name]);
 };
 
+/**
+ * Given a translation key and a hash of translation values, return the
+ * corresponding translated value with any interpolation applied, eg:
+ *
+ *   getTranslation(
+ *     "submarine.checkout.expiry_date",
+ *     {
+ *       "submarine": {
+ *         "checkout": {
+ *           "expiry_date": "Expires {{ expiry_month }}/{{ expiry_year }}"
+ *         }
+ *       }
+ *     }
+ *   )
+ *
+ * returns:
+ *
+ *   "Expires {{ expiry_month }}/{{ expiry_year }}"
+ *
+ * If the translation key can't be found, this method simply returns the
+ * supplied key.
+ *
+ * @param key
+ * @param translations
+ * @returns {string}
+ */
+const getTranslation = (key, translations = {}) => {
+  let currentTranslation = translations;
+  key.split('.').forEach((k) => {
+    currentTranslation = currentTranslation[k];
+    if(typeof currentTranslation === 'undefined') {
+      return key;
+    }
+  });
+  return currentTranslation;
+};
+
+/**
+ * Given a translation key, a hash of translation values, and an (optional)
+ * hash of interpolation values, return the corresponding translated value with
+ * any interpolations applied, eg:
+ *
+ *   getInterpolatedTranslation(
+ *     "submarine.checkout.expiry_date",
+ *     {
+ *       "submarine": {
+ *         "checkout": {
+ *           "expiry_date": "Expires {{ expiry_month }}/{{ expiry_year }}"
+ *         }
+ *       }
+ *     },
+ *     {
+ *       "expiry_month": "05",
+ *       "expiry_year": "24"
+ *     }
+ *   )
+ *
+ * returns:
+ *
+ *   "Expires 05/24"
+ *
+ * If the translation key can't be found, this method simply returns the
+ * supplied key.
+ *
+ * @param key
+ * @param translations
+ * @param values
+ * @returns {string}
+ */
+const getInterpolatedTranslation = (key, translations = {}, values = {}) => {
+  return Object.entries(values).reduce((output, value) => {
+    const [k, v] = value;
+    return output.replace(`{{ ${k} }}`, v);
+  }, getTranslation(key, translations));
+};
+
 export default class SubmarinePaymentMethod {
 
-  constructor($, options, data) {
+  constructor($, options, translations, data) {
     this.$ = $;
     this.options = options;
+    this.translations = translations;
     this.data = data;
   }
 
@@ -34,6 +111,10 @@ export default class SubmarinePaymentMethod {
       this.getRenderTemplate(),
       html_templates
     );
+  }
+
+  t(key, values = {}) {
+    return getInterpolatedTranslation(key, this.translations, values);
   }
 
   validate() {
