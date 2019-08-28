@@ -1,0 +1,86 @@
+import { ShopPaymentMethod } from './shop_payment_method';
+
+export class StripeCreditCardShopPaymentMethod extends ShopPaymentMethod {
+
+  beforeSetup() {
+    this.$subfields = this.$(`[data-subfields-for-payment-method="shop_payment_method_${this.data.id}"]`);
+  }
+
+  setup(success, failure) {
+    this.stripe = Stripe(this.data.attributes.publishable_api_key);
+    this.elements = this.stripe.elements({
+      locale: this.options.shop.locale
+    });
+
+    this.cardNumber = this.elements.create('cardNumber', {
+      style: this.getElementStyles(),
+      classes: this.getElementClasses()
+    });
+    this.cardNumber.mount('#stripe-credit-card-card-number');
+
+    this.cardExpiry = this.elements.create('cardExpiry', {
+      style: this.getElementStyles(),
+      classes: this.getElementClasses()
+    });
+    this.cardExpiry.mount('#stripe-credit-card-expiration-date');
+
+    this.cardCvc = this.elements.create('cardCvc', {
+      style: this.getElementStyles(),
+      classes: this.getElementClasses()
+    });
+    this.cardCvc.mount('#stripe-credit-card-cvv');
+  }
+
+  getElementStyles() {
+    return {
+      base: {
+        color: '#333333',
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif',
+        fontSize: '14px'
+      }
+    }
+  }
+
+  getElementClasses() {
+    return {}
+  }
+
+  validate() {
+    return [];
+  }
+
+  getAdditionalData() {
+    return {
+      name: this.$subfields.find('#stripe-credit-card-name').val()
+    }
+  }
+
+  process(callbacks) {
+    this.stripe.createToken(this.cardNumber, this.getAdditionalData()).then((result) => {
+      if(result.error) {
+        callbacks.error(result.error);
+        return;
+      }
+
+      callbacks.success({
+        customer_payment_method_id: null,
+        payment_nonce: result.token.id,
+        payment_method_type: 'credit-card',
+        payment_processor: 'stripe',
+      });
+    });
+  }
+
+  getRenderContext() {
+    return {
+      id: this.data.id,
+      title: this.t('payment_methods.shop_payment_methods.stripe.credit_card.title'),
+      value: this.getValue(),
+      subfields_content: this.options.html_templates.stripe_credit_card_subfields_content,
+      subfields_class: 'card-fields-container',
+      icon: 'generic',
+      icon_description: this.t('payment_methods.shop_payment_methods.stripe.credit_card.icon_description')
+    }
+  }
+
+}
