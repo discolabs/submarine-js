@@ -14,24 +14,24 @@ export class StripeCreditCardShopPaymentMethod extends ShopPaymentMethod {
 
     this.cardNumber = this.elements.create(
       'cardNumber',
-      Object.assign(this.getDefaultStyles(), this.options.stripe.elements.cardNumber)
+      Object.assign(this.getDefaultConfig(), this.options.stripe.elements.cardNumber)
     );
     this.cardNumber.mount('#stripe-credit-card-card-number');
 
     this.cardExpiry = this.elements.create(
       'cardExpiry',
-      Object.assign(this.getDefaultStyles(), this.options.stripe.elements.cardExpiry)
+      Object.assign(this.getDefaultConfig(), this.options.stripe.elements.cardExpiry)
     );
     this.cardExpiry.mount('#stripe-credit-card-expiration-date');
 
     this.cardCvc = this.elements.create(
       'cardCvc',
-      Object.assign(this.getDefaultStyles(), this.options.stripe.elements.cardCvc)
+      Object.assign(this.getDefaultConfig(), this.options.stripe.elements.cardCvc)
     );
     this.cardCvc.mount('#stripe-credit-card-cvv');
   }
 
-  getDefaultStyles() {
+  getDefaultConfig() {
     return {
       style: this.getElementStyles(),
       classes: this.getElementClasses(),
