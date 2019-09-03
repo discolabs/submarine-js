@@ -12,23 +12,30 @@ export class StripeCreditCardShopPaymentMethod extends ShopPaymentMethod {
       locale: this.options.shop.locale
     });
 
-    this.cardNumber = this.elements.create('cardNumber', {
-      style: this.getElementStyles(),
-      classes: this.getElementClasses()
-    });
+    this.cardNumber = this.elements.create(
+      'cardNumber',
+      Object.assign(this.getDefaultConfig(), this.options.stripe.elements.cardNumber)
+    );
     this.cardNumber.mount('#stripe-credit-card-card-number');
 
-    this.cardExpiry = this.elements.create('cardExpiry', {
-      style: this.getElementStyles(),
-      classes: this.getElementClasses()
-    });
+    this.cardExpiry = this.elements.create(
+      'cardExpiry',
+      Object.assign(this.getDefaultConfig(), this.options.stripe.elements.cardExpiry)
+    );
     this.cardExpiry.mount('#stripe-credit-card-expiration-date');
 
-    this.cardCvc = this.elements.create('cardCvc', {
-      style: this.getElementStyles(),
-      classes: this.getElementClasses()
-    });
+    this.cardCvc = this.elements.create(
+      'cardCvc',
+      Object.assign(this.getDefaultConfig(), this.options.stripe.elements.cardCvc)
+    );
     this.cardCvc.mount('#stripe-credit-card-cvv');
+  }
+
+  getDefaultConfig() {
+    return {
+      style: this.getElementStyles(),
+      classes: this.getElementClasses(),
+    }
   }
 
   getElementStyles() {

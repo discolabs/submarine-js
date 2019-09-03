@@ -229,6 +229,7 @@ export class SubmarinePaymentMethodStep extends CustardModule {
 
   onPaymentMethodProcessingSuccess(payment_method_data) {
     payment_method_data.checkout_id = this.options.checkout.id;
+    payment_method_data.customer_id = this.options.customer && this.options.customer.id;
     this.submarine.api.createPreliminaryPaymentMethod({ preliminary_payment_method: payment_method_data }, (result) => {
       if(result.success) {
         this.$form.attr('data-form-submarine-submit', 'ok');
