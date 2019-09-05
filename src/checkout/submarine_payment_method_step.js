@@ -69,6 +69,13 @@ export class SubmarinePaymentMethodStep extends CustardModule {
 
     // Start the (asynchronous) loading of each payment method.
     this.loadPaymentMethods();
+
+    // If Submarine is the only payment gateway, select the first payment gateway option
+    this.$firstPaymentGatewayOption = this.$element.find('[data-select-payment-method]').first().find('label');
+
+    if (this.submarineIsOnlyPaymentGateway()) {
+      this.$firstPaymentGatewayOption.click();
+    }
   }
 
   setupSubmarine() {
@@ -143,7 +150,15 @@ export class SubmarinePaymentMethodStep extends CustardModule {
   onSubmarinePaymentMethodChange() {
     const $selectedSubmarinePaymentMethodInput = this.$element.find(`${SUBMARINE_PAYMENT_METHOD_INPUT_SELECTOR}:checked`);
     const $selectedSubmarinePaymentMethodElement = $selectedSubmarinePaymentMethodInput.closest('[data-select-payment-method]');
+    const $selectedShopifyGatewayElement = this.$element.find(`${SHOPIFY_GATEWAY_INPUT_SELECTOR}`).closest('[data-select-gateway]');
+
     this.selectedSubmarinePaymentMethod = $selectedSubmarinePaymentMethodElement.attr('data-select-payment-method');
+
+    // If Shopify payment gateways have been disabled and Submarine is the only payment gateway,
+    // be able to check if Submarine is the selected payment gateway
+    if (this.submarineIsOnlyPaymentGateway()) {
+      this.selectedShopifyGatewayId = $selectedShopifyGatewayElement.attr('data-select-gateway');
+    }
 
     // If a Submarine payment method was selected, ensure the Shopify Submarine gateway is selected under the hood.
     if(this.selectedSubmarinePaymentMethod !== undefined) {
@@ -169,6 +184,10 @@ export class SubmarinePaymentMethodStep extends CustardModule {
 
   submarineGatewayIsSelected() {
     return this.selectedShopifyGatewayId === this.options.submarine.submarine_gateway_id;
+  }
+
+  submarineIsOnlyPaymentGateway() {
+    return this.$element.find(`${SHOPIFY_GATEWAY_INPUT_SELECTOR}`).attr('type') === 'hidden';
   }
 
   sortGatewaysAndPaymentMethods() {
