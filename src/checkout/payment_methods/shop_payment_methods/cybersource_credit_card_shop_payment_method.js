@@ -82,7 +82,6 @@ export class CybersourceCreditCardShopPaymentMethod extends ShopPaymentMethod {
         errors.push(key);
       }
     });
-    console.log('validate', errors);
     return errors;
   }
 

@@ -198,7 +198,6 @@ export class SubmarinePaymentMethodStep extends CustardModule {
     $sortableElements = $sortableElements.sort((a, b) => {
       const aSortIndex = this.getSortableElementSortIndex(a);
       const bSortIndex = this.getSortableElementSortIndex(b);
-      console.log(a, aSortIndex, b, bSortIndex);
       if(aSortIndex < bSortIndex) { return -1; }
       if(aSortIndex > bSortIndex) { return 1; }
       return 0;
