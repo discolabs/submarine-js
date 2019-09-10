@@ -34,8 +34,8 @@ export class CustomerPaymentMethod extends SubmarinePaymentMethod {
     return 'customer_payment_method';
   }
 
-  process(callbacks) {
-    callbacks.success({
+  process(success, error, additionalData) {
+    success({
       customer_payment_method_id: this.data.id,
       payment_nonce: null,
       payment_method_type: null,
