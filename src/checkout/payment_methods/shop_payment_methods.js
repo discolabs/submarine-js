@@ -1,10 +1,14 @@
 import { ShopPaymentMethod } from "./shop_payment_methods/shop_payment_method";
 import { BraintreeCreditCardShopPaymentMethod } from "./shop_payment_methods/braintree_credit_card_shop_payment_method";
+import { CybersourceCreditCardShopPaymentMethod } from "./shop_payment_methods/cybersource_credit_card_shop_payment_method";
 import { StripeCreditCardShopPaymentMethod } from "./shop_payment_methods/stripe_credit_card_shop_payment_method";
 
 const SHOP_PAYMENT_METHODS = {
   'braintree': {
     'credit-card': BraintreeCreditCardShopPaymentMethod
+  },
+  'cybersource': {
+    'credit-card': CybersourceCreditCardShopPaymentMethod
   },
   'stripe': {
     'credit-card': StripeCreditCardShopPaymentMethod
