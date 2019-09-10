@@ -198,7 +198,6 @@ export class SubmarinePaymentMethodStep extends CustardModule {
     $sortableElements = $sortableElements.sort((a, b) => {
       const aSortIndex = this.getSortableElementSortIndex(a);
       const bSortIndex = this.getSortableElementSortIndex(b);
-      console.log(a, aSortIndex, b, bSortIndex);
       if(aSortIndex < bSortIndex) { return -1; }
       if(aSortIndex > bSortIndex) { return 1; }
       return 0;
@@ -240,10 +239,11 @@ export class SubmarinePaymentMethodStep extends CustardModule {
     }
 
     // Perform processing.
-    selectedPaymentMethod.process({
-      success: this.onPaymentMethodProcessingSuccess.bind(this),
-      error: this.onPaymentMethodProcessingError.bind(this)
-    });
+    selectedPaymentMethod.process(
+      this.onPaymentMethodProcessingSuccess.bind(this),
+      this.onPaymentMethodProcessingError.bind(this),
+      this.getAdditionalData()
+    );
   }
 
   onPaymentMethodProcessingSuccess(payment_method_data) {
@@ -260,6 +260,43 @@ export class SubmarinePaymentMethodStep extends CustardModule {
   onPaymentMethodProcessingError(error) {
     this.stopLoading();
     alert(error.message);
+  }
+
+  getAdditionalData() {
+    return Object.assign(this.options.checkout, {
+      billing_address: this.getBillingAddress()
+    });
+  }
+
+  getBillingAddress() {
+    const formData = this.getPaymentFormData();
+
+    // If there's not a different billing address, return the shipping address.
+    if(formData['checkout[different_billing_address]'] !== 'true') {
+      return this.options.checkout.shipping_address;
+    }
+
+    // If there is a different billing address, return it in the expected format.
+    return {
+      address1: formData['checkout[billing_address][address1]'],
+      address2: formData['checkout[billing_address][address2]'],
+      city: formData['checkout[billing_address][city]'],
+      company: formData['checkout[billing_address][company]'],
+      country: formData['checkout[billing_address][country]'],
+      country_code: formData['checkout[billing_address][country_code]'],
+      first_name: formData['checkout[billing_address][first_name]'],
+      last_name: formData['checkout[billing_address][last_name]'],
+      province: formData['checkout[billing_address][province]'],
+      province_code: formData['checkout[billing_address][province_code]'],
+      zip: formData['checkout[billing_address][zip]'],
+    };
+  }
+
+  getPaymentFormData() {
+    return this.$form.serializeArray().reduce((formData, input) => {
+      formData[input.name] = input.value;
+      return formData;
+    }, {});
   }
 
   startLoading() {

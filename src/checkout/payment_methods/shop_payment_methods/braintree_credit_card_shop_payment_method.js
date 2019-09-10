@@ -75,7 +75,7 @@ export class BraintreeCreditCardShopPaymentMethod extends ShopPaymentMethod {
     return errors;
   }
 
-  process(callbacks) {
+  process(success, error, additionalData) {
     this.hostedFieldsInstance.tokenize((tokenizeError, payload) => {
       if(!tokenizeError) {
         callbacks.success({

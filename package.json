@@ -13,6 +13,7 @@
     "shopify"
   ],
   "dependencies": {
-    "@discolabs/custard-js": "0.0.4"
+    "@discolabs/custard-js": "^0.0.4",
+    "payform": "^1.4.0"
   }
 }

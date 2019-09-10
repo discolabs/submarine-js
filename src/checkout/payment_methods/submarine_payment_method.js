@@ -121,7 +121,7 @@ export default class SubmarinePaymentMethod {
     return [];
   }
 
-  process(callbacks) {
+  process(success, error, additionalData) {
 
   }
 

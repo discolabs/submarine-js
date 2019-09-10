@@ -62,14 +62,14 @@ export class StripeCreditCardShopPaymentMethod extends ShopPaymentMethod {
     }
   }
 
-  process(callbacks) {
+  process(success, error, additionalData) {
     this.stripe.createToken(this.cardNumber, this.getAdditionalData()).then((result) => {
       if(result.error) {
-        callbacks.error(result.error);
+        error(result.error);
         return;
       }
 
-      callbacks.success({
+      success({
         customer_payment_method_id: null,
         payment_nonce: result.token.id,
         payment_method_type: 'credit-card',
