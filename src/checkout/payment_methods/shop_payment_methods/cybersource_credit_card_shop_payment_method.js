@@ -86,7 +86,7 @@ export class CybersourceCreditCardShopPaymentMethod extends ShopPaymentMethod {
     return errors;
   }
 
-  process(callbacks) {
+  process(success, error, additionalData) {
     const state = this.getState();
 
     const flexOptions = {
@@ -103,14 +103,14 @@ export class CybersourceCreditCardShopPaymentMethod extends ShopPaymentMethod {
 
     flex.createToken(flexOptions, (response) => {
       if(!response.error) {
-        callbacks.success({
+        success({
           customer_payment_method_id: null,
           payment_nonce: response.token,
           payment_method_type: 'credit-card',
           payment_processor: 'cybersource',
         });
       } else {
-        callbacks.error({
+        error({
           message: response
         });
       }
