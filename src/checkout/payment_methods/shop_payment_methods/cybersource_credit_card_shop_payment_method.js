@@ -94,8 +94,8 @@ export class CybersourceCreditCardShopPaymentMethod extends ShopPaymentMethod {
       cardInfo: {
         cardNumber: state.number.value,
         cardType: state.cybersourceCardType.value,
-        expiryMonth: state.expiry.month,
-        expiryYear: state.expiry.year
+        expiryMonth: state.expiry.value.month,
+        expiryYear: state.expiry.value.year
       },
       encryptionType: 'rsaoaep256'
     };
@@ -109,8 +109,8 @@ export class CybersourceCreditCardShopPaymentMethod extends ShopPaymentMethod {
           payment_processor: 'cybersource',
           additional_data: {
             last4: state.number.value.substring(state.number.value.length - 4),
-            exp_year: state.expiry.year,
-            exp_month: state.expiry.month
+            exp_year: state.expiry.value.year,
+            exp_month: state.expiry.value.month
           }
         });
       } else {
