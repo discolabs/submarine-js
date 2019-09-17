@@ -107,6 +107,11 @@ export class CybersourceCreditCardShopPaymentMethod extends ShopPaymentMethod {
           payment_nonce: response.token,
           payment_method_type: 'credit-card',
           payment_processor: 'cybersource',
+          additional_data: {
+            last4: state.number.value.substring(state.number.value.length - 4),
+            exp_year: state.expiry.year,
+            exp_month: state.expiry.month
+          }
         });
       } else {
         error({
