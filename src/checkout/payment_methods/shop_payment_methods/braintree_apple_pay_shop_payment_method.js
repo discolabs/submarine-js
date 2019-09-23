@@ -7,6 +7,7 @@ export class BraintreeApplePayShopPaymentMethod extends ShopPaymentMethod {
 
   setup(success, failure) {
     const that = this;
+    that.errors = [];
 
     // Start by generating a Braintree client token.
     submarine.api
@@ -32,15 +33,18 @@ export class BraintreeApplePayShopPaymentMethod extends ShopPaymentMethod {
                 success();
               } else {
                 const error = "No active card was found.";
+                that.errors = [...that.errors, error]
                 failure(error);
               }
             });
           })
           .catch(error => {
+            that.errors = [...that.errors, error];
             failure(error);
           });
       })
       .catch(error => {
+        that.errors = [...that.errors, error];
         failure(error);
       });
   }
