@@ -1,13 +1,8 @@
 import { ShopPaymentMethod } from "./shop_payment_method";
 
 export class BraintreeApplePayShopPaymentMethod extends ShopPaymentMethod {
-  beforeSetup() {
-    if (!window.ApplePaySession || !ApplePaySession.supportsVersion(3) || !ApplePaySession.canMakePayments()) {
-      const $applePayPaymentMethod = $('[data-select-payment-method="shop_payment_method_21"]');
-      console.error("This device does not support Apple Pay");
-      $applePayPaymentMethod.hide();
-      return;
-    }
+  shouldLoad() {
+    return window.ApplePaySession && ApplePaySession.supportsVersion(3) && ApplePaySession.canMakePayments();
   }
 
   setup(success, failure) {
@@ -48,6 +43,10 @@ export class BraintreeApplePayShopPaymentMethod extends ShopPaymentMethod {
       .catch(error => {
         failure(error);
       });
+  }
+
+  validate() {
+    return this.errors;
   }
 
   process(success, error, additionalData) {
