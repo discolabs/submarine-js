@@ -5,15 +5,15 @@ import { CybersourceCreditCardShopPaymentMethod } from "./shop_payment_methods/c
 import { StripeCreditCardShopPaymentMethod } from "./shop_payment_methods/stripe_credit_card_shop_payment_method";
 
 const SHOP_PAYMENT_METHODS = {
-  braintree: {
-    "credit-card": BraintreeCreditCardShopPaymentMethod,
-    "apple-pay": BraintreeApplePayShopPaymentMethod
+  'braintree': {
+    'credit-card': BraintreeCreditCardShopPaymentMethod,
+    'apple-pay': BraintreeApplePayShopPaymentMethod
   },
-  cybersource: {
-    "credit-card": CybersourceCreditCardShopPaymentMethod
+  'cybersource': {
+    'credit-card': CybersourceCreditCardShopPaymentMethod
   },
-  stripe: {
-    "credit-card": StripeCreditCardShopPaymentMethod
+  'stripe': {
+    'credit-card': StripeCreditCardShopPaymentMethod
   }
 };
 
@@ -24,16 +24,9 @@ const SHOP_PAYMENT_METHODS = {
  * @param shopPaymentMethod
  * @returns {ShopPaymentMethod}
  */
-const getShopPaymentMethodClass = shopPaymentMethod => {
-  if (
-    SHOP_PAYMENT_METHODS[shopPaymentMethod.attributes.payment_processor] &&
-    SHOP_PAYMENT_METHODS[shopPaymentMethod.attributes.payment_processor][
-      shopPaymentMethod.attributes.payment_method_type
-    ]
-  ) {
-    return SHOP_PAYMENT_METHODS[shopPaymentMethod.attributes.payment_processor][
-      shopPaymentMethod.attributes.payment_method_type
-    ];
+const getShopPaymentMethodClass = (shopPaymentMethod) => {
+  if(SHOP_PAYMENT_METHODS[shopPaymentMethod.attributes.payment_processor] && SHOP_PAYMENT_METHODS[shopPaymentMethod.attributes.payment_processor][shopPaymentMethod.attributes.payment_method_type]) {
+    return SHOP_PAYMENT_METHODS[shopPaymentMethod.attributes.payment_processor][shopPaymentMethod.attributes.payment_method_type];
   }
   return ShopPaymentMethod;
 };
