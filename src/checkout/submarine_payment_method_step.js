@@ -256,7 +256,7 @@ export class SubmarinePaymentMethodStep extends CustardModule {
   setupApplePayButton() {
     const $applePayButton = this.$element.find(".apple-pay-button");
 
-    if ($applePayButton && $applePayButton.is(":visible")) {
+    if ($applePayButton.length) {
       $applePayButton.on("click", this.onApplePayRequest.bind(this));
     }
   }
