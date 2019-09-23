@@ -72,35 +72,35 @@ export class BraintreeApplePayShopPaymentMethod extends ShopPaymentMethod {
           console.error("Error validating merchant:", validationError);
           session.abort();
         });
+    };
 
-      session.onpaymentauthorized = event => {
-        that.applePayInstance
-          .tokenize({
-            token: event.payment.token
-          })
-          .then(function(tokenizeError, payload) {
-            if (!tokenizeError) {
-              success({
-                customer_payment_method_id: null,
-                payment_nonce: payload.nonce,
-                payment_method_type: "apple-pay",
-                payment_processor: "braintree"
-              });
-              session.completePayment(ApplePaySession.STATUS_SUCCESS);
-            } else {
-              error({
-                message: tokenizeError
-              });
-            }
-          })
-          .catch(function(tokenizeError) {
+    session.onpaymentauthorized = event => {
+      that.applePayInstance
+        .tokenize({
+          token: event.payment.token
+        })
+        .then(function(tokenizeError, payload) {
+          if (!tokenizeError) {
+            session.completePayment(ApplePaySession.STATUS_SUCCESS);
+            success({
+              customer_payment_method_id: null,
+              payment_nonce: payload.nonce,
+              payment_method_type: "apple-pay",
+              payment_processor: "braintree"
+            });
+          } else {
             error({
               message: tokenizeError
             });
-            console.error("Error tokenizing Apple Pay:", tokenizeError);
-            session.completePayment(ApplePaySession.STATUS_FAILURE);
+          }
+        })
+        .catch(function(tokenizeError) {
+          error({
+            message: tokenizeError
           });
-      };
+          console.error("Error tokenizing Apple Pay:", tokenizeError);
+          session.completePayment(ApplePaySession.STATUS_FAILURE);
+        });
     };
 
     session.begin();
