@@ -24,19 +24,25 @@ export class BraintreeApplePayShopPaymentMethod extends ShopPaymentMethod {
           .then(applePayInstance => {
             // Finally, store a reference to the Apple Pay instance for later use.
 
-            return ApplePaySession.canMakePaymentsWithActiveCard(applePayInstance.merchantIdentifier).then(function(
-              canMakePaymentsWithActiveCard
-            ) {
-              if (canMakePaymentsWithActiveCard) {
-                that.applePayInstance = applePayInstance;
+            that.applePayInstance = applePayInstance;
 
-                success();
-              } else {
-                const error = "No active card was found.";
-                that.errors = [...that.errors, error]
-                failure(error);
-              }
-            });
+            success();
+
+            // Commented out for now as ApplePaySession.canMakePaymentsWithActiveCard always returns false
+
+            // return ApplePaySession.canMakePaymentsWithActiveCard(applePayInstance.merchantIdentifier).then(function(
+            //   canMakePaymentsWithActiveCard
+            // ) {
+            //   if (canMakePaymentsWithActiveCard) {
+            //     that.applePayInstance = applePayInstance;
+
+            //     success();
+            //   } else {
+            //     const error = "No active card was found.";
+            //     that.errors = [...that.errors, error]
+            //     failure(error);
+            //   }
+            // });
           })
           .catch(error => {
             that.errors = [...that.errors, error];
@@ -66,7 +72,8 @@ export class BraintreeApplePayShopPaymentMethod extends ShopPaymentMethod {
     session.onvalidatemerchant = event => {
       that.applePayInstance
         .performValidation({
-          validationURL: event.validationURL,
+          // This should be event.validationURL but hard-coded for now as it was going to 'https://cn-apple-pay-gateway-cert.apple.com/paymentservices/startSession'
+          validationURL: "https://apple-pay-gateway-cert.apple.com/paymentservices/startSession",
           displayName: that.options.shop.name
         })
         .then(merchantSession => session.completeMerchantValidation(merchantSession))
