@@ -21,12 +21,16 @@ export class CybersourceCreditCardShopPaymentMethod extends ShopPaymentMethod {
   beforeSetup() {
     this.$subfields = this.$(`[data-subfields-for-payment-method="shop_payment_method_${this.data.id}"]`);
     this.$cardNumber = this.$subfields.find('#cybersource-credit-card-number');
+    this.$cardName = this.$subfields.find('#cybersource-credit-card-name');
     this.$cardExpiry = this.$subfields.find('#cybersource-credit-card-expiry');
     this.$cardCvv = this.$subfields.find('#cybersource-credit-card-cvv');
   }
 
   setup(success, failure) {
     const that = this;
+
+    // Register an event listener to clear validation errors.
+    this.$subfields.on('input', this.onInputChange.bind(this));
 
     // Start by generating a Cybersource client token and storing it for later use.
     submarine.api.generatePaymentProcessorClientToken('cybersource', (client_token) => {
@@ -45,6 +49,7 @@ export class CybersourceCreditCardShopPaymentMethod extends ShopPaymentMethod {
 
   getState() {
     const number = this.$cardNumber.val();
+    const name = this.$cardName.val();
     const expiry = payform.parseCardExpiry(this.$cardExpiry.val());
     const cvv = this.$cardCvv.val();
     const cardType = payform.parseCardType(number);
@@ -53,7 +58,11 @@ export class CybersourceCreditCardShopPaymentMethod extends ShopPaymentMethod {
     return {
       number: {
         value: number,
-        valid: payform.validateCardNumber(number)
+        valid: payform.validateCardNumber(number) && this.isValidCardType(cardType)
+      },
+      name: {
+        value: name,
+        valid: !!name.length
       },
       expiry: {
         value: expiry,
@@ -65,7 +74,7 @@ export class CybersourceCreditCardShopPaymentMethod extends ShopPaymentMethod {
       },
       cardType: {
         value: cardType,
-        valid: !!cardType
+        valid: !!cardType,
       },
       cybersourceCardType: {
         value: cybersourceCardType,
@@ -82,7 +91,27 @@ export class CybersourceCreditCardShopPaymentMethod extends ShopPaymentMethod {
         errors.push(key);
       }
     });
+    this.displayValidationErrors(state, errors);
     return errors;
+  }
+
+  isValidCardType(cardType) {
+    return !!cardType && (['visa', 'mastercard', 'amex', 'discover'].indexOf(cardType) !== -1);
+  }
+
+  displayValidationErrors(state, errors) {
+    this.$cardNumber.closest('.field').toggleClass('field--error field--submarine-error', !state.number.valid);
+    this.$cardName.closest('.field').toggleClass('field--error field--submarine-error', !state.name.valid);
+    this.$cardExpiry.closest('.field').toggleClass('field--error field--submarine-error', !state.expiry.valid);
+    this.$cardCvv.closest('.field').toggleClass('field--error field--submarine-error', !state.cvv.valid);
+
+    if(errors.length) {
+      this.$subfields.find('.field--error input').first().focus();
+    }
+  }
+
+  onInputChange(e) {
+    this.$(e.target).closest('.field').toggleClass('field--error field--submarine-error', false);
   }
 
   process(success, error, additionalData) {
