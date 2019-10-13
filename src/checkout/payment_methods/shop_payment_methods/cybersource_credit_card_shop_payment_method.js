@@ -126,7 +126,8 @@ export class CybersourceCreditCardShopPaymentMethod extends ShopPaymentMethod {
         expiryMonth: state.expiry.value.month,
         expiryYear: state.expiry.value.year
       },
-      encryptionType: 'rsaoaep256'
+      encryptionType: 'rsaoaep256',
+      production: (this.options.submarine.environment === 'production')
     };
 
     flex.createToken(flexOptions, (response) => {
