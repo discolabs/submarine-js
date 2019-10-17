@@ -90,6 +90,10 @@ export default class SubmarinePaymentMethod {
     this.data = data;
   }
 
+  shouldLoad() {
+    return true;
+  }
+
   load() {
     this.beforeSetup();
     return new Promise(this.setup.bind(this));

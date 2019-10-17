@@ -76,6 +76,9 @@ export class SubmarinePaymentMethodStep extends CustardModule {
     if (this.submarineIsOnlyPaymentGateway()) {
       this.$firstPaymentGatewayOption.click();
     }
+
+    // Set up Apple Pay event listener if available as a payment option
+    this.setupApplePayButton();
   }
 
   setupSubmarine() {
@@ -87,12 +90,14 @@ export class SubmarinePaymentMethodStep extends CustardModule {
   }
 
   loadPaymentMethods() {
-    Promise.all(this.paymentMethods.map((paymentMethod) => {
-      return paymentMethod.load();
-    }))
-    .then(this.paymentMethodsSetupSuccess.bind(this))
-    .catch(this.paymentMethodsSetupFailure.bind(this))
-    .finally(this.paymentMethodsSetupComplete.bind(this))
+    Promise.all(
+      this.paymentMethods
+        .filter(paymentMethod => paymentMethod.shouldLoad())
+        .map(paymentMethod => paymentMethod.load())
+    )
+      .then(this.paymentMethodsSetupSuccess.bind(this))
+      .catch(this.paymentMethodsSetupFailure.bind(this))
+      .finally(this.paymentMethodsSetupComplete.bind(this));
   }
 
   paymentMethodsSetupSuccess(result) {
@@ -125,9 +130,11 @@ export class SubmarinePaymentMethodStep extends CustardModule {
   }
 
   renderPaymentMethods() {
-    return this.paymentMethods.reduce((html, payment_method, index) => {
-      return html + payment_method.render(this.options.html_templates, index);
-    }, '');
+    return this.paymentMethods
+      .filter(payment_method => payment_method.shouldLoad())
+      .reduce((html, payment_method, index) => {
+        return html + payment_method.render(this.options.html_templates, index);
+      }, '');
   }
 
   onShopifyGatewayChange() {
@@ -240,6 +247,43 @@ export class SubmarinePaymentMethodStep extends CustardModule {
 
     // Perform processing.
     selectedPaymentMethod.process(
+      this.onPaymentMethodProcessingSuccess.bind(this),
+      this.onPaymentMethodProcessingError.bind(this),
+      this.getAdditionalData()
+    );
+  }
+
+  setupApplePayButton() {
+    const $applePayButton = this.$element.find(".apple-pay-button");
+
+    if ($applePayButton.length) {
+      $applePayButton.on("click", this.onApplePayRequest.bind(this));
+    }
+  }
+
+  onApplePayRequest(e) {
+    // If we've flagged the form as okay to submit, submit as normal.
+    if(this.$form.attr('data-form-submarine-submit') === 'ok') {
+      return true;
+    }
+
+    // Find Apple Pay payment method.
+    const applePayPaymentMethod = this.paymentMethods.find((paymentMethod) => {
+      return paymentMethod.data.attributes.payment_method_type == 'apple-pay';
+    });
+
+    e.preventDefault();
+    this.startLoading();
+
+    // Validate the payment method. If invalid, bail out.
+    const validationErrors = applePayPaymentMethod.validate();
+    if(validationErrors.length) {
+      this.stopLoading();
+      return;
+    }
+
+    // Perform processing.
+    applePayPaymentMethod.process(
       this.onPaymentMethodProcessingSuccess.bind(this),
       this.onPaymentMethodProcessingError.bind(this),
       this.getAdditionalData()

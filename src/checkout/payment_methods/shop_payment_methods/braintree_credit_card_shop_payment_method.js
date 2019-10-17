@@ -78,14 +78,14 @@ export class BraintreeCreditCardShopPaymentMethod extends ShopPaymentMethod {
   process(success, error, additionalData) {
     this.hostedFieldsInstance.tokenize((tokenizeError, payload) => {
       if(!tokenizeError) {
-        callbacks.success({
+        success({
           customer_payment_method_id: null,
           payment_nonce: payload.nonce,
           payment_method_type: 'credit-card',
           payment_processor: 'braintree',
         });
       } else {
-        callbacks.error({
+        error({
           message: null // Braintree's UI will display an appropriate error message.
         });
       }
