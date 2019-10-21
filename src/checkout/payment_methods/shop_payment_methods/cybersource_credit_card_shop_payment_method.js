@@ -16,6 +16,8 @@ const CYBERSOURCE_CARD_TYPE_MAPPINGS = {
   forbrugsforeningen: null,
 };
 
+const MAXIMUM_FUTURE_EXPIRY_IN_YEARS = 15;
+
 export class CybersourceCreditCardShopPaymentMethod extends ShopPaymentMethod {
 
   beforeSetup() {
@@ -66,7 +68,7 @@ export class CybersourceCreditCardShopPaymentMethod extends ShopPaymentMethod {
       },
       expiry: {
         value: expiry,
-        valid: payform.validateCardExpiry(expiry.month, expiry.year)
+        valid: this.isValidExpiry(expiry.month, expiry.year)
       },
       cvv: {
         value: cvv,
@@ -97,6 +99,16 @@ export class CybersourceCreditCardShopPaymentMethod extends ShopPaymentMethod {
 
   isValidCardType(cardType) {
     return !!cardType && (['visa', 'mastercard', 'amex', 'discover'].indexOf(cardType) !== -1);
+  }
+
+  isValidExpiry(month, year) {
+    if(!payform.validateCardExpiry(month, year)) {
+      return false;
+    }
+
+    // Payform does not enforce any maximum future expiry, so we add our own here.
+    const currentYear = new Date().getFullYear();
+    return year < (currentYear + MAXIMUM_FUTURE_EXPIRY_IN_YEARS);
   }
 
   displayValidationErrors(state, errors) {
