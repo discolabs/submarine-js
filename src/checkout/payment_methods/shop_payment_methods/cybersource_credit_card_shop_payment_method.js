@@ -135,8 +135,8 @@ export class CybersourceCreditCardShopPaymentMethod extends ShopPaymentMethod {
       cardInfo: {
         cardNumber: state.number.value,
         cardType: state.cybersourceCardType.value,
-        expiryMonth: state.expiry.value.month,
-        expiryYear: state.expiry.value.year
+        cardExpirationMonth: (state.expiry.value.month || '').toString(),
+        cardExpirationYear: (state.expiry.value.year || '').toString()
       },
       encryptionType: 'rsaoaep256',
       production: (this.options.submarine.environment === 'production')
