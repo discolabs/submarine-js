@@ -129,14 +129,17 @@ export class CybersourceCreditCardShopPaymentMethod extends ShopPaymentMethod {
   process(success, error, additionalData) {
     const state = this.getState();
 
+    const expiryMonthAsString = (state.expiry.value.month || '').toString();
+    const expiryYearAsString = (state.expiry.value.year || '').toString();
+
     const flexOptions = {
       kid: this.client_token.attributes.token,
       keystore: this.client_token.attributes.data.jwk,
       cardInfo: {
         cardNumber: state.number.value,
         cardType: state.cybersourceCardType.value,
-        cardExpirationMonth: (state.expiry.value.month || '').toString(),
-        cardExpirationYear: (state.expiry.value.year || '').toString()
+        cardExpirationMonth: (expiryMonthAsString.length === 1 ? '0' : '') + expiryMonthAsString,
+        cardExpirationYear: expiryYearAsString
       },
       encryptionType: 'rsaoaep256',
       production: (this.options.submarine.environment === 'production')
