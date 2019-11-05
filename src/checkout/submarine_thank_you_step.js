@@ -19,9 +19,9 @@ export class SubmarineThankYouStep extends CustardModule {
   }
 
   updatePaymentMethodIcon() {
-    this.paymentIcon = this.$element.find(".payment-icon");
-    this.paymentIcon.removeClass("payment-icon--generic");
-    this.paymentIcon.addClass(`payment-icon--${this.iconName()}`);
+    this.$paymentIcon = this.$element.find(".payment-icon");
+    this.$paymentIcon.removeClass("payment-icon--generic");
+    this.$paymentIcon.addClass(`payment-icon--${this.iconName()}`);
   }
 
   iconName() {
