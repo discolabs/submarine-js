@@ -16,6 +16,12 @@ const CYBERSOURCE_CARD_TYPE_MAPPINGS = {
   forbrugsforeningen: null,
 };
 
+const PUBLIC_KEY_ENCRYPTION_TYPE_NONE = 'none';
+const PUBLIC_KEY_ENCRYPTION_TYPE_RSAOAEP = 'rsaoaep';
+const PUBLIC_KEY_ENCRYPTION_TYPE_RSAOAEP256 = 'rsaoaep256';
+
+const KEY_TYPE_RSA = 'RSA';
+
 const MAXIMUM_FUTURE_EXPIRY_IN_YEARS = 15;
 
 export class CybersourceCreditCardShopPaymentMethod extends ShopPaymentMethod {
@@ -141,7 +147,7 @@ export class CybersourceCreditCardShopPaymentMethod extends ShopPaymentMethod {
         cardExpirationMonth: (expiryMonthAsString.length === 1 ? '0' : '') + expiryMonthAsString,
         cardExpirationYear: expiryYearAsString
       },
-      encryptionType: 'rsaoaep256',
+      encryptionType: this.getPublicKeyEncryptionType(this.client_token),
       production: (this.options.submarine.environment === 'production')
     };
 
@@ -165,6 +171,23 @@ export class CybersourceCreditCardShopPaymentMethod extends ShopPaymentMethod {
         });
       }
     });
+  }
+
+  /**
+   * Given a client token, return the type of encryption used for the public
+   * key. Note that this function currently cannot distinguish between RSAOAEP
+   * and RSAOAEP256 encryption types, as there's no specific attribute that's
+   * return that lets us determine this.
+   *
+   * @param client_token
+   * @returns {string}
+   */
+  getPublicKeyEncryptionType(client_token) {
+    if(client_token.attributes.data.jwk && (client_token.attributes.data.jwk.kty === KEY_TYPE_RSA)) {
+      return PUBLIC_KEY_ENCRYPTION_TYPE_RSAOAEP256;
+    }
+
+    return PUBLIC_KEY_ENCRYPTION_TYPE_NONE;
   }
 
   getRenderContext() {
