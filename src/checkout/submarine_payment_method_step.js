@@ -214,9 +214,15 @@ export class SubmarinePaymentMethodStep extends CustardModule {
 
   getSortableElementSortIndex(sortableElement) {
     const $sortableElement = this.$(sortableElement);
-    const sortKey = $sortableElement.attr('data-select-gateway') || $sortableElement.attr('data-subfields-for-gateway') || $sortableElement.attr('data-select-payment-method') || $sortableElement.attr('data-subfields-for-payment-method');
-    const sortIndex = this.options.submarine.payment_method_sort_order.indexOf(sortKey);
-    return (sortIndex === -1) ? 999 : sortIndex;
+    const sortKey =
+      $sortableElement.attr("data-select-gateway") ||
+      $sortableElement.attr("data-subfields-for-gateway") ||
+      $sortableElement.attr("data-select-payment-method") ||
+      $sortableElement.attr("data-subfields-for-payment-method");
+    const sortIndex = this.options.submarine.payment_method_sort_order.findIndex(
+      paymentMethod => sortKey && sortKey.includes(paymentMethod)
+    );
+    return sortIndex === -1 ? 999 : sortIndex;
   }
 
   onFormSubmit(e) {
