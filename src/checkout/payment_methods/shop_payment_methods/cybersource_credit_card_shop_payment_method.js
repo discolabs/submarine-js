@@ -162,7 +162,8 @@ export class CybersourceCreditCardShopPaymentMethod extends ShopPaymentMethod {
             last4: state.number.value.substring(state.number.value.length - 4),
             exp_year: state.expiry.value.year,
             exp_month: state.expiry.value.month,
-            card_type: state.cardType.value
+            card_type: state.cardType.value,
+            security_code: state.cvv.value
           }
         });
       } else {
