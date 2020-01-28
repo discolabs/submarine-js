@@ -61,7 +61,7 @@ const getMethodUrl = (api_url, method, context) => {
  * Return a querystring that can be appended to an API endpoint.
  *
  * @params params
- * @returns {object}
+ * @returns {string}
  */
 const buildQueryString = (params) => {
   const queryString = Object.keys(params)
