@@ -107,8 +107,8 @@ export class ApiClient {
 
   execute(method, data, context, callback) {
     const url = getMethodUrl(this.api_url, method, context);
-    const queryParams = this.buildQueryParams(data, http_method);
     const http_method = getMethodHttpMethod(method);
+    const queryParams = this.buildQueryParams(data, http_method);
     const payload = getMethodPayload(http_method, data);
 
     return fetch(url + buildQueryString(queryParams), {
