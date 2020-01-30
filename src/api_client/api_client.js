@@ -108,7 +108,7 @@ export class ApiClient {
   execute(method, data, context, callback) {
     const url = getMethodUrl(this.api_url, method, context);
     const http_method = getMethodHttpMethod(method);
-    const queryParams = this.buildQueryParams(data, http_method);
+    const queryParams = this.buildQueryParams(http_method, data);
     const payload = getMethodPayload(http_method, data);
 
     return fetch(url + buildQueryString(queryParams), {
@@ -125,7 +125,7 @@ export class ApiClient {
     });
   }
 
-  buildQueryParams(data, http_method) {
+  buildQueryParams(http_method, data) {
     return http_method === GET ? Object.assign(this.authentication, data) : this.authentication;
   }
 
