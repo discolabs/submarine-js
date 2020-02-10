@@ -6,39 +6,43 @@ const DELETE = 'delete';
 const API_METHODS = {
   get_payment_methods: {
     http_method: GET,
-    endpoint: '/customers/{{ customer_id }}/payment_methods.json'
+    endpoint: "/customers/{{ customer_id }}/payment_methods.json"
   },
   create_payment_method: {
     http_method: POST,
-    endpoint: '/customers/{{ customer_id }}/payment_methods.json'
+    endpoint: "/customers/{{ customer_id }}/payment_methods.json"
   },
   remove_payment_method: {
     http_method: DELETE,
-    endpoint: '/customers/{{ customer_id }}/payment_methods/{{ id }}.json'
+    endpoint: "/customers/{{ customer_id }}/payment_methods/{{ id }}.json"
   },
   get_subscriptions: {
     http_method: GET,
-    endpoint: '/customers/{{ customer_id }}/subscriptions.json'
+    endpoint: "/customers/{{ customer_id }}/subscriptions.json"
+  },
+  duplicate_subscription: {
+    http_method: POST,
+    endpoint: "/customers/{{ customer_id }}/subscriptions/{{ id }}/duplicate.json"
   },
   update_subscription: {
     http_method: PUT,
-    endpoint: '/customers/{{ customer_id }}/subscriptions/{{ id }}.json'
+    endpoint: "/customers/{{ customer_id }}/subscriptions/{{ id }}.json"
   },
   cancel_subscription: {
     http_method: DELETE,
-    endpoint: '/customers/{{ customer_id }}/subscriptions/{{ id }}.json'
+    endpoint: "/customers/{{ customer_id }}/subscriptions/{{ id }}.json"
   },
   get_products: {
     http_method: GET,
-    endpoint: '/products.json'
+    endpoint: "/products.json"
   },
   generate_payment_processor_client_token: {
     http_method: POST,
-    endpoint: '/payment_processor_client_tokens.json'
+    endpoint: "/payment_processor_client_tokens.json"
   },
   create_preliminary_payment_method: {
     http_method: POST,
-    endpoint: '/preliminary_payment_methods.json'
+    endpoint: "/preliminary_payment_methods.json"
   }
 };
 
@@ -154,6 +158,11 @@ export class ApiClient {
   cancelSubscription(id, callback) {
     const context = Object.assign({}, this.context, { id });
     return this.execute('cancel_subscription', {}, context, callback);
+  }
+
+  duplicateSubscription(id, callback) {
+    const context = Object.assign({}, this.context, { id });
+    return this.execute("duplicate_subscription", {}, context, callback);
   }
 
   generatePaymentProcessorClientToken(payment_processor, callback) {
