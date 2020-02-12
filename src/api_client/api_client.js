@@ -20,6 +20,10 @@ const API_METHODS = {
     http_method: GET,
     endpoint: '/customers/{{ customer_id }}/subscriptions.json'
   },
+  duplicate_subscription: {
+    http_method: POST,
+    endpoint: '/customers/{{ customer_id }}/subscriptions/{{ id }}/duplicate.json'
+  },
   update_subscription: {
     http_method: PUT,
     endpoint: '/customers/{{ customer_id }}/subscriptions/{{ id }}.json'
@@ -154,6 +158,11 @@ export class ApiClient {
   cancelSubscription(id, callback) {
     const context = Object.assign({}, this.context, { id });
     return this.execute('cancel_subscription', {}, context, callback);
+  }
+
+  duplicateSubscription(id, callback) {
+    const context = Object.assign({}, this.context, { id });
+    return this.execute('duplicate_subscription', {}, context, callback);
   }
 
   generatePaymentProcessorClientToken(payment_processor, callback) {
