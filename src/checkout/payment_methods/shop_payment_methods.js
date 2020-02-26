@@ -4,6 +4,7 @@ import { BraintreeApplePayShopPaymentMethod } from "./shop_payment_methods/brain
 import { CybersourceCreditCardShopPaymentMethod } from "./shop_payment_methods/cybersource_credit_card_shop_payment_method";
 import { StripeCreditCardShopPaymentMethod } from "./shop_payment_methods/stripe_credit_card_shop_payment_method";
 import { KomojuCreditCardShopPaymentMethod } from "./shop_payment_methods/komoju_credit_card_payment_method";
+import { SubmarineBankTransferShopPaymentMethod } from "./shop_payment_methods/submarine_bank_transfer_payment_method";
 
 const SHOP_PAYMENT_METHODS = {
   'braintree': {
@@ -18,6 +19,9 @@ const SHOP_PAYMENT_METHODS = {
   },
   'komoju': {
     'credit-card': KomojuCreditCardShopPaymentMethod
+  },
+  'submarine': {
+    'bank-transfer': SubmarineBankTransferShopPaymentMethod
   }
 };
 
