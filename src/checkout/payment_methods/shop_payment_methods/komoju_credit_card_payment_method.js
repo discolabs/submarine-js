@@ -19,7 +19,8 @@ export class KomojuCreditCardShopPaymentMethod extends ShopPaymentMethod {
       locale: this.options.shop.locale,
       currency: this.options.shop.currency,
       title: this.options.shop.name,
-      methods: ["credit_card"]
+      methods: ["credit_card"],
+      prefillEmail: this.options.customer.email
     });
   }
 
