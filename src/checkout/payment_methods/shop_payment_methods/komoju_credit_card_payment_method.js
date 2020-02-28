@@ -20,7 +20,7 @@ export class KomojuCreditCardShopPaymentMethod extends ShopPaymentMethod {
       currency: this.options.shop.currency,
       title: this.options.shop.name,
       methods: ["credit_card"],
-      prefillEmail: this.options.customer && this.options.customer.email
+      prefillEmail: this.options.checkout.email
     });
   }
 
