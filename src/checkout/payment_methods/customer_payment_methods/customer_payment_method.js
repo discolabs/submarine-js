@@ -46,9 +46,13 @@ export class CustomerPaymentMethod extends SubmarinePaymentMethod {
   }
 
   paypalRenderContext() {
+    const title = this.t(
+      "payment_methods.customer_payment_methods.paypal.title"
+    ).replace("{{ email }}", this.data.attributes.payment_data.email);
+
     return {
       id: this.data.id,
-      title: `Saved Paypal account (${this.data.attributes.payment_data.email})`,
+      title: title,
       value: this.getValue(),
       icon: 'paypal',
       icon_description: 'Paypal'
@@ -56,9 +60,13 @@ export class CustomerPaymentMethod extends SubmarinePaymentMethod {
   }
 
   creditCardRenderContext() {
+    const title = this.t(
+      "payment_methods.customer_payment_methods.credit_card.title"
+    ).replace("{{ last4 }}", this.data.attributes.payment_data.last4);
+
     return {
       id: this.data.id,
-      title: `Saved card ending in ${this.data.attributes.payment_data.last4}`,
+      title: title,
       value: this.getValue(),
       icon: this.data.attributes.payment_data.brand.toLowerCase(),
       icon_description: this.data.attributes.payment_data.brand
@@ -68,7 +76,7 @@ export class CustomerPaymentMethod extends SubmarinePaymentMethod {
   bankTransferRenderContext() {
     return {
       id: this.data.id,
-      title: this.t('payment_methods.shop_payment_methods.submarine.bank_transfer.title'),
+      title: this.t('payment_methods.customer_payment_methods.bank_transfer.title'),
       value: this.getValue(),
       icon: '',
       icon_description: ''
