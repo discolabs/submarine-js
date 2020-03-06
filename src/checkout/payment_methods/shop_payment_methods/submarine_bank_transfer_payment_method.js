@@ -18,7 +18,7 @@ export class SubmarineBankTransferShopPaymentMethod extends ShopPaymentMethod {
       value: this.getValue(),
       subfields_content: this.options.html_templates.submarine_bank_transfer_subfields_content,
       subfields_class: '',
-      icon: 'generic',
+      icon: '',
       icon_description: this.t('payment_methods.shop_payment_methods.submarine.bank_transfer.icon_description'),
       submarine_bank_transfer_message_js: this.t('payment_methods.shop_payment_methods.submarine.bank_transfer.submarine_bank_transfer_message_js'),
       submarine_bank_transfer_message_no_js: this.t('payment_methods.shop_payment_methods.submarine.bank_transfer.submarine_bank_transfer_message_no_js'),
