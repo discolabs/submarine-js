@@ -1,9 +1,12 @@
-import { CustardModule, STEP_THANK_YOU, STEP_ORDER_STATUS } from "@discolabs/custard-js";
+import {
+  CustardModule,
+  STEP_THANK_YOU,
+  STEP_ORDER_STATUS
+} from '@discolabs/custard-js';
 
 export class SubmarineThankYouStep extends CustardModule {
-
   id() {
-    return "submarine-thank-you-step";
+    return 'submarine-thank-you-step';
   }
 
   steps() {
@@ -11,7 +14,7 @@ export class SubmarineThankYouStep extends CustardModule {
   }
 
   selector() {
-    return ".main__content";
+    return '.main__content';
   }
 
   setup() {
@@ -28,34 +31,34 @@ export class SubmarineThankYouStep extends CustardModule {
     const [paymentMethodName, paymentMethodId] = paymentMethod.split(
       /_(?=\d+$)/
     );
-    this.paymentMethodData = allPaymentMethods.find(paymentMethod => {
-      return (
-        paymentMethod["type"] === paymentMethodName &&
-        Number(paymentMethod["id"]) === Number(paymentMethodId)
-      );
-    });
+    this.paymentMethodData = allPaymentMethods.find(
+      paymentMethod =>
+        paymentMethod.type === paymentMethodName &&
+        Number(paymentMethod.id) === Number(paymentMethodId)
+    );
     this.paymentMethodType = this.paymentMethodData.attributes.payment_method_type;
   }
 
   updatePaymentMethodIcon() {
-    this.$paymentIcon = this.$element.find(".payment-icon");
+    this.$paymentIcon = this.$element.find('.payment-icon');
     if (this.isBankTransfer()) {
       this.$paymentIcon.replaceWith(`<span>${this.bankTransferTitle()}</span>`);
 
       return;
     }
 
-    this.$paymentIcon.removeClass("payment-icon--generic");
+    this.$paymentIcon.removeClass('payment-icon--generic');
     this.$paymentIcon.addClass(`payment-icon--${this.iconName()}`);
   }
 
   bankTransferTitle() {
-    return this.options.submarine.translations.payment_methods.shop_payment_methods.submarine.bank_transfer.title;
+    return this.options.submarine.translations.payment_methods
+      .shop_payment_methods.submarine.bank_transfer.title;
   }
 
   iconName() {
     if (this.isShopPaymentMethod()) {
-      if (this.isCreditCard()) return "generic";
+      if (this.isCreditCard()) return 'generic';
       return this.paymentMethodType;
     }
 
@@ -63,11 +66,11 @@ export class SubmarineThankYouStep extends CustardModule {
   }
 
   isShopPaymentMethod() {
-    return this.paymentMethodData["type"] === "shop_payment_method";
+    return this.paymentMethodData.type === 'shop_payment_method';
   }
 
   isCreditCard() {
-    return this.paymentMethodType === "credit-card";
+    return this.paymentMethodType === 'credit-card';
   }
 
   isBankTransfer() {
@@ -76,8 +79,7 @@ export class SubmarineThankYouStep extends CustardModule {
 
   cardBrand() {
     return this.paymentMethodData.attributes.payment_data.brand
-      .replace(/\s+/g, "-")
+      .replace(/\s+/g, '-')
       .toLowerCase();
   }
-
 }

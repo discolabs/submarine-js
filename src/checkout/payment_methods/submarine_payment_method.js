@@ -1,9 +1,8 @@
-const renderHtmlTemplate = (object, template_name, html_templates) => {
-  return Object.entries(object).reduce((output, value) => {
+const renderHtmlTemplate = (object, template_name, html_templates) =>
+  Object.entries(object).reduce((output, value) => {
     const [k, v] = value;
     return output.replace(new RegExp(`{{ ${k} }}`, 'g'), v);
   }, html_templates[template_name]);
-};
 
 /**
  * Given a translation key and a hash of translation values, return the
@@ -33,9 +32,9 @@ const renderHtmlTemplate = (object, template_name, html_templates) => {
  */
 const getTranslation = (key, translations = {}) => {
   let currentTranslation = translations;
-  key.split('.').forEach((k) => {
+  key.split('.').forEach(k => {
     currentTranslation = currentTranslation[k];
-    if(typeof currentTranslation === 'undefined') {
+    if (typeof currentTranslation === 'undefined') {
       return key;
     }
   });
@@ -74,15 +73,13 @@ const getTranslation = (key, translations = {}) => {
  * @param values
  * @returns {string}
  */
-const getInterpolatedTranslation = (key, translations = {}, values = {}) => {
-  return Object.entries(values).reduce((output, value) => {
+const getInterpolatedTranslation = (key, translations = {}, values = {}) =>
+  Object.entries(values).reduce((output, value) => {
     const [k, v] = value;
     return output.replace(`{{ ${k} }}`, v);
   }, getTranslation(key, translations));
-};
 
 export default class SubmarinePaymentMethod {
-
   constructor($, options, translations, data) {
     this.$ = $;
     this.options = options;
@@ -105,13 +102,21 @@ export default class SubmarinePaymentMethod {
     success(true);
   }
 
-  getValue() { return null; }
-  getRenderContext() { return {} }
-  getRenderTemplate() { return null; }
+  getValue() {
+    return null;
+  }
+
+  getRenderContext() {
+    return {};
+  }
+
+  getRenderTemplate() {
+    return null;
+  }
 
   render(html_templates, index) {
     return renderHtmlTemplate(
-      Object.assign({}, this.getRenderContext(), { index: index }),
+      { ...this.getRenderContext(), index },
       this.getRenderTemplate(),
       html_templates
     );
@@ -125,8 +130,5 @@ export default class SubmarinePaymentMethod {
     return [];
   }
 
-  process(success, error, additionalData) {
-
-  }
-
+  process(success, error, additionalData) {}
 }

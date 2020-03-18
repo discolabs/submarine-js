@@ -1,6 +1,5 @@
+import payform from 'payform';
 import { ShopPaymentMethod } from './shop_payment_method';
-
-import payform from "payform";
 
 const CYBERSOURCE_CARD_TYPE_MAPPINGS = {
   visa: '001',
@@ -13,7 +12,7 @@ const CYBERSOURCE_CARD_TYPE_MAPPINGS = {
   visaelectron: '033',
   dankort: '034',
   unionpay: '062',
-  forbrugsforeningen: null,
+  forbrugsforeningen: null
 };
 
 const PUBLIC_KEY_ENCRYPTION_TYPE_NONE = 'none';
@@ -25,9 +24,10 @@ const KEY_TYPE_RSA = 'RSA';
 const MAXIMUM_FUTURE_EXPIRY_IN_YEARS = 15;
 
 export class CybersourceCreditCardShopPaymentMethod extends ShopPaymentMethod {
-
   beforeSetup() {
-    this.$subfields = this.$(`[data-subfields-for-payment-method="shop_payment_method_${this.data.id}"]`);
+    this.$subfields = this.$(
+      `[data-subfields-for-payment-method="shop_payment_method_${this.data.id}"]`
+    );
     this.$cardNumber = this.$subfields.find('#cybersource-credit-card-number');
     this.$cardName = this.$subfields.find('#cybersource-credit-card-name');
     this.$cardExpiry = this.$subfields.find('#cybersource-credit-card-expiry');
@@ -41,18 +41,20 @@ export class CybersourceCreditCardShopPaymentMethod extends ShopPaymentMethod {
     this.$subfields.on('input', this.onInputChange.bind(this));
 
     // Start by generating a Cybersource client token and storing it for later use.
-    submarine.api.generatePaymentProcessorClientToken('cybersource', (client_token) => {
-      that.client_token = client_token;
+    submarine.api
+      .generatePaymentProcessorClientToken('cybersource', client_token => {
+        that.client_token = client_token;
 
-      // Set up Payform formatters on inputs.
-      payform.cardNumberInput(that.$cardNumber[0]);
-      payform.expiryInput(that.$cardExpiry[0]);
-      payform.cvcInput(that.$cardCvv[0]);
+        // Set up Payform formatters on inputs.
+        payform.cardNumberInput(that.$cardNumber[0]);
+        payform.expiryInput(that.$cardExpiry[0]);
+        payform.cvcInput(that.$cardCvv[0]);
 
-      success();
-    }).catch((error) => {
-      failure(error);
-    });
+        success();
+      })
+      .catch(error => {
+        failure(error);
+      });
   }
 
   getState() {
@@ -61,12 +63,15 @@ export class CybersourceCreditCardShopPaymentMethod extends ShopPaymentMethod {
     const expiry = payform.parseCardExpiry(this.$cardExpiry.val());
     const cvv = this.$cardCvv.val();
     const cardType = payform.parseCardType(number);
-    const cybersourceCardType = cardType ? CYBERSOURCE_CARD_TYPE_MAPPINGS[cardType] : null;
+    const cybersourceCardType = cardType
+      ? CYBERSOURCE_CARD_TYPE_MAPPINGS[cardType]
+      : null;
 
     return {
       number: {
         value: number,
-        valid: payform.validateCardNumber(number) && this.isValidCardType(cardType)
+        valid:
+          payform.validateCardNumber(number) && this.isValidCardType(cardType)
       },
       name: {
         value: name,
@@ -82,7 +87,7 @@ export class CybersourceCreditCardShopPaymentMethod extends ShopPaymentMethod {
       },
       cardType: {
         value: cardType,
-        valid: !!cardType,
+        valid: !!cardType
       },
       cybersourceCardType: {
         value: cybersourceCardType,
@@ -93,9 +98,9 @@ export class CybersourceCreditCardShopPaymentMethod extends ShopPaymentMethod {
 
   validate() {
     const state = this.getState();
-    let errors = [];
-    Object.keys(state).forEach((key) => {
-      if(!state[key].valid) {
+    const errors = [];
+    Object.keys(state).forEach(key => {
+      if (!state[key].valid) {
         errors.push(key);
       }
     });
@@ -104,32 +109,48 @@ export class CybersourceCreditCardShopPaymentMethod extends ShopPaymentMethod {
   }
 
   isValidCardType(cardType) {
-    return !!cardType && (['visa', 'mastercard', 'amex', 'discover'].indexOf(cardType) !== -1);
+    return (
+      !!cardType &&
+      ['visa', 'mastercard', 'amex', 'discover'].indexOf(cardType) !== -1
+    );
   }
 
   isValidExpiry(month, year) {
-    if(!payform.validateCardExpiry(month, year)) {
+    if (!payform.validateCardExpiry(month, year)) {
       return false;
     }
 
     // Payform does not enforce any maximum future expiry, so we add our own here.
     const currentYear = new Date().getFullYear();
-    return year < (currentYear + MAXIMUM_FUTURE_EXPIRY_IN_YEARS);
+    return year < currentYear + MAXIMUM_FUTURE_EXPIRY_IN_YEARS;
   }
 
   displayValidationErrors(state, errors) {
-    this.$cardNumber.closest('.field').toggleClass('field--error field--submarine-error', !state.number.valid);
-    this.$cardName.closest('.field').toggleClass('field--error field--submarine-error', !state.name.valid);
-    this.$cardExpiry.closest('.field').toggleClass('field--error field--submarine-error', !state.expiry.valid);
-    this.$cardCvv.closest('.field').toggleClass('field--error field--submarine-error', !state.cvv.valid);
+    this.$cardNumber
+      .closest('.field')
+      .toggleClass('field--error field--submarine-error', !state.number.valid);
+    this.$cardName
+      .closest('.field')
+      .toggleClass('field--error field--submarine-error', !state.name.valid);
+    this.$cardExpiry
+      .closest('.field')
+      .toggleClass('field--error field--submarine-error', !state.expiry.valid);
+    this.$cardCvv
+      .closest('.field')
+      .toggleClass('field--error field--submarine-error', !state.cvv.valid);
 
-    if(errors.length) {
-      this.$subfields.find('.field--error input').first().focus();
+    if (errors.length) {
+      this.$subfields
+        .find('.field--error input')
+        .first()
+        .focus();
     }
   }
 
   onInputChange(e) {
-    this.$(e.target).closest('.field').toggleClass('field--error field--submarine-error', false);
+    this.$(e.target)
+      .closest('.field')
+      .toggleClass('field--error field--submarine-error', false);
   }
 
   process(success, error, additionalData) {
@@ -144,15 +165,16 @@ export class CybersourceCreditCardShopPaymentMethod extends ShopPaymentMethod {
       cardInfo: {
         cardNumber: state.number.value,
         cardType: state.cybersourceCardType.value,
-        cardExpirationMonth: (expiryMonthAsString.length === 1 ? '0' : '') + expiryMonthAsString,
+        cardExpirationMonth:
+          (expiryMonthAsString.length === 1 ? '0' : '') + expiryMonthAsString,
         cardExpirationYear: expiryYearAsString
       },
       encryptionType: this.getPublicKeyEncryptionType(this.client_token),
-      production: (this.options.submarine.environment === 'production')
+      production: this.options.submarine.environment === 'production'
     };
 
-    flex.createToken(flexOptions, (response) => {
-      if(!response.error) {
+    flex.createToken(flexOptions, response => {
+      if (!response.error) {
         success({
           customer_payment_method_id: null,
           payment_nonce: response.token,
@@ -184,7 +206,10 @@ export class CybersourceCreditCardShopPaymentMethod extends ShopPaymentMethod {
    * @returns {string}
    */
   getPublicKeyEncryptionType(client_token) {
-    if(client_token.attributes.data.jwk && (client_token.attributes.data.jwk.kty === KEY_TYPE_RSA)) {
+    if (
+      client_token.attributes.data.jwk &&
+      client_token.attributes.data.jwk.kty === KEY_TYPE_RSA
+    ) {
       return PUBLIC_KEY_ENCRYPTION_TYPE_RSAOAEP256;
     }
 
@@ -194,13 +219,17 @@ export class CybersourceCreditCardShopPaymentMethod extends ShopPaymentMethod {
   getRenderContext() {
     return {
       id: this.data.id,
-      title: this.t('payment_methods.shop_payment_methods.cybersource.credit_card.title'),
+      title: this.t(
+        'payment_methods.shop_payment_methods.cybersource.credit_card.title'
+      ),
       value: this.getValue(),
-      subfields_content: this.options.html_templates.cybersource_credit_card_subfields_content,
+      subfields_content: this.options.html_templates
+        .cybersource_credit_card_subfields_content,
       subfields_class: 'card-fields-container',
       icon: 'generic',
-      icon_description: this.t('payment_methods.shop_payment_methods.cybersource.credit_card.icon_description')
-    }
+      icon_description: this.t(
+        'payment_methods.shop_payment_methods.cybersource.credit_card.icon_description'
+      )
+    };
   }
-
 }

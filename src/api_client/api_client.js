@@ -22,7 +22,8 @@ const API_METHODS = {
   },
   duplicate_subscription: {
     http_method: POST,
-    endpoint: '/customers/{{ customer_id }}/subscriptions/{{ id }}/duplicate.json'
+    endpoint:
+      '/customers/{{ customer_id }}/subscriptions/{{ id }}/duplicate.json'
   },
   update_subscription: {
     http_method: PUT,
@@ -54,12 +55,11 @@ const API_METHODS = {
  * @param context
  * @returns {string}
  */
-const getMethodUrl = (api_url, method, context) => {
-  return Object.entries(context).reduce((method_url, contextValue) => {
-    const [k , v] = contextValue;
+const getMethodUrl = (api_url, method, context) =>
+  Object.entries(context).reduce((method_url, contextValue) => {
+    const [k, v] = contextValue;
     return method_url.replace(new RegExp(`{{ ${k} }}`, 'g'), v);
   }, [api_url, API_METHODS[method].endpoint].join(''));
-};
 
 /**
  * Return a querystring that can be appended to an API endpoint.
@@ -67,10 +67,10 @@ const getMethodUrl = (api_url, method, context) => {
  * @params params
  * @returns {string}
  */
-const buildQueryString = (params) => {
+const buildQueryString = params => {
   const queryString = Object.keys(params)
     .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
-    .join("&");
+    .join('&');
 
   return `?${queryString}`;
 };
@@ -82,9 +82,7 @@ const buildQueryString = (params) => {
  * @param method
  * @returns {string}
  */
-const getMethodHttpMethod = (method) => {
-  return API_METHODS[method].http_method;
-};
+const getMethodHttpMethod = method => API_METHODS[method].http_method;
 
 /**
  * Return the appropriate request payload for the given HTTP method and
@@ -102,7 +100,6 @@ const getMethodPayload = (http_method, data) => {
 };
 
 export class ApiClient {
-
   constructor(api_url, authentication, context) {
     this.api_url = api_url;
     this.authentication = authentication;
@@ -119,18 +116,20 @@ export class ApiClient {
       method: http_method,
       mode: 'cors',
       headers: {
-        "Content-Type": "application/json; charset=utf-8"
+        'Content-Type': 'application/json; charset=utf-8'
       },
       body: payload
-    }).then((response) => {
-      return response.json();
-    }).then((json) => {
-      callback && callback(json.data);
-    });
+    })
+      .then(response => response.json())
+      .then(json => {
+        callback && callback(json.data);
+      });
   }
 
   buildQueryParams(http_method, data) {
-    return http_method === GET ? Object.assign(this.authentication, data) : this.authentication;
+    return http_method === GET
+      ? Object.assign(this.authentication, data)
+      : this.authentication;
   }
 
   getPaymentMethods(callback) {
@@ -138,40 +137,64 @@ export class ApiClient {
   }
 
   createPaymentMethod(customer_payment_method, callback) {
-    return this.execute('create_payment_method', customer_payment_method, this.context, callback);
+    return this.execute(
+      'create_payment_method',
+      customer_payment_method,
+      this.context,
+      callback
+    );
   }
 
   removePaymentMethod(id, callback) {
-    const context = Object.assign({}, this.context, { id });
+    const context = { ...this.context, id };
     return this.execute('remove_payment_method', {}, context, callback);
   }
 
   getSubscriptions(callback, params = {}) {
-    return this.execute('get_subscriptions', Object.assign({}, params), this.context, callback);
+    return this.execute(
+      'get_subscriptions',
+      { ...params },
+      this.context,
+      callback
+    );
   }
 
   updateSubscription(id, subscription, callback) {
-    const context = Object.assign({}, this.context, { id });
+    const context = { ...this.context, id };
     return this.execute('update_subscription', subscription, context, callback);
   }
 
   cancelSubscription(id, callback) {
-    const context = Object.assign({}, this.context, { id });
+    const context = { ...this.context, id };
     return this.execute('cancel_subscription', {}, context, callback);
   }
 
   duplicateSubscription(id, callback) {
-    const context = Object.assign({}, this.context, { id });
+    const context = { ...this.context, id };
     return this.execute('duplicate_subscription', {}, context, callback);
   }
 
   generatePaymentProcessorClientToken(payment_processor, callback) {
-    const payload = { data: { type: 'payment_processor_client_token', attributes: { payment_processor } } };
-    return this.execute('generate_payment_processor_client_token', payload, this.context, callback);
+    const payload = {
+      data: {
+        type: 'payment_processor_client_token',
+        attributes: { payment_processor }
+      }
+    };
+    return this.execute(
+      'generate_payment_processor_client_token',
+      payload,
+      this.context,
+      callback
+    );
   }
 
   createPreliminaryPaymentMethod(preliminary_payment_method, callback) {
-    return this.execute('create_preliminary_payment_method', preliminary_payment_method, this.context, callback);
+    return this.execute(
+      'create_preliminary_payment_method',
+      preliminary_payment_method,
+      this.context,
+      callback
+    );
   }
-
 }

@@ -1,7 +1,6 @@
-import SubmarinePaymentMethod from "../submarine_payment_method";
+import SubmarinePaymentMethod from '../submarine_payment_method';
 
 export class CustomerPaymentMethod extends SubmarinePaymentMethod {
-
   getValue() {
     return `customer_payment_method_${this.data.id}`;
   }
@@ -17,7 +16,7 @@ export class CustomerPaymentMethod extends SubmarinePaymentMethod {
       value: this.getValue(),
       icon: null,
       icon_description: null
-    }
+    };
   }
 
   getRenderTemplate() {
@@ -29,7 +28,7 @@ export class CustomerPaymentMethod extends SubmarinePaymentMethod {
       customer_payment_method_id: this.data.id,
       payment_nonce: null,
       payment_method_type: null,
-      payment_processor: null,
+      payment_processor: null
     });
   }
 
@@ -42,17 +41,17 @@ export class CustomerPaymentMethod extends SubmarinePaymentMethod {
   }
 
   isBankTransfer() {
-    return this.data.attributes.payment_method_type === "bank-transfer";
+    return this.data.attributes.payment_method_type === 'bank-transfer';
   }
 
   paypalRenderContext() {
     const title = this.t(
-      "payment_methods.customer_payment_methods.paypal.title"
-    ).replace("{{ email }}", this.data.attributes.payment_data.email);
+      'payment_methods.customer_payment_methods.paypal.title'
+    ).replace('{{ email }}', this.data.attributes.payment_data.email);
 
     return {
       id: this.data.id,
-      title: title,
+      title,
       value: this.getValue(),
       icon: 'paypal',
       icon_description: 'Paypal'
@@ -61,12 +60,12 @@ export class CustomerPaymentMethod extends SubmarinePaymentMethod {
 
   creditCardRenderContext() {
     const title = this.t(
-      "payment_methods.customer_payment_methods.credit_card.title"
-    ).replace("{{ last4 }}", this.data.attributes.payment_data.last4);
+      'payment_methods.customer_payment_methods.credit_card.title'
+    ).replace('{{ last4 }}', this.data.attributes.payment_data.last4);
 
     return {
       id: this.data.id,
-      title: title,
+      title,
       value: this.getValue(),
       icon: this.data.attributes.payment_data.brand.toLowerCase(),
       icon_description: this.data.attributes.payment_data.brand
@@ -76,11 +75,12 @@ export class CustomerPaymentMethod extends SubmarinePaymentMethod {
   bankTransferRenderContext() {
     return {
       id: this.data.id,
-      title: this.t('payment_methods.customer_payment_methods.bank_transfer.title'),
+      title: this.t(
+        'payment_methods.customer_payment_methods.bank_transfer.title'
+      ),
       value: this.getValue(),
       icon: '',
       icon_description: ''
     };
   }
-
 }

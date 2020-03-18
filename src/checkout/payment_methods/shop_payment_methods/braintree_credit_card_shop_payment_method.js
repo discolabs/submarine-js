@@ -1,40 +1,48 @@
 import { ShopPaymentMethod } from './shop_payment_method';
 
 export class BraintreeCreditCardShopPaymentMethod extends ShopPaymentMethod {
-
   beforeSetup() {
-    this.$subfields = this.$(`[data-subfields-for-payment-method="shop_payment_method_${this.data.id}"]`);
+    this.$subfields = this.$(
+      `[data-subfields-for-payment-method="shop_payment_method_${this.data.id}"]`
+    );
   }
 
   setup(success, failure) {
     const that = this;
 
     // Start by generating a Braintree client token.
-    submarine.api.generatePaymentProcessorClientToken('braintree', (client_token) => {
+    submarine.api
+      .generatePaymentProcessorClientToken('braintree', client_token => {
+        // Then, create a Braintree client instance.
+        braintree.client
+          .create({
+            authorization: client_token.attributes.token
+          })
+          .then(clientInstance =>
+            // Next, set up the Hosted Fields instance.
+            braintree.hostedFields.create(
+              that.getHostedFieldsOptions(clientInstance)
+            )
+          )
+          .then(hostedFieldsInstance => {
+            // Finally, store a reference to the hosted fields instance for later use.
+            that.hostedFieldsInstance = hostedFieldsInstance;
 
-      // Then, create a Braintree client instance.
-      braintree.client.create({
-        authorization: client_token.attributes.token
-      }).then((clientInstance) => {
+            // Flag subfields as loaded, and tweak the height of Braintree iframes
+            this.$subfields.addClass(
+              'card-fields-container--loaded card-fields-container--transitioned'
+            );
+            this.$subfields.find('iframe').css({ height: '18px' });
 
-        // Next, set up the Hosted Fields instance.
-        return braintree.hostedFields.create(that.getHostedFieldsOptions(clientInstance));
-      }).then((hostedFieldsInstance) => {
-
-        // Finally, store a reference to the hosted fields instance for later use.
-        that.hostedFieldsInstance = hostedFieldsInstance;
-
-        // Flag subfields as loaded, and tweak the height of Braintree iframes
-        this.$subfields.addClass('card-fields-container--loaded card-fields-container--transitioned');
-        this.$subfields.find('iframe').css({ 'height': '18px' });
-
-        success();
-      }).catch((error) => {
+            success();
+          })
+          .catch(error => {
+            failure(error);
+          });
+      })
+      .catch(error => {
         failure(error);
       });
-    }).catch((error) => {
-      failure(error);
-    });
   }
 
   getHostedFieldsOptions(clientInstance) {
@@ -42,9 +50,10 @@ export class BraintreeCreditCardShopPaymentMethod extends ShopPaymentMethod {
       client: clientInstance,
       styles: {
         input: {
-          'color': '#333333',
+          color: '#333333',
           'font-size': '14px',
-          'font-family': '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif'
+          'font-family':
+            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif'
         }
       },
       fields: {
@@ -54,7 +63,9 @@ export class BraintreeCreditCardShopPaymentMethod extends ShopPaymentMethod {
         },
         expirationDate: {
           selector: '#braintree-credit-card-expiration-date',
-          placeholder: this.t('checkout.credit_card.expiration_date_placeholder')
+          placeholder: this.t(
+            'checkout.credit_card.expiration_date_placeholder'
+          )
         },
         cvv: {
           selector: '#braintree-credit-card-cvv',
@@ -66,9 +77,9 @@ export class BraintreeCreditCardShopPaymentMethod extends ShopPaymentMethod {
 
   validate() {
     const state = this.hostedFieldsInstance.getState();
-    let errors = [];
-    Object.keys(state.fields).forEach((key) => {
-      if(!state.fields[key].isValid) {
+    const errors = [];
+    Object.keys(state.fields).forEach(key => {
+      if (!state.fields[key].isValid) {
         errors.push(key);
       }
     });
@@ -77,12 +88,12 @@ export class BraintreeCreditCardShopPaymentMethod extends ShopPaymentMethod {
 
   process(success, error, additionalData) {
     this.hostedFieldsInstance.tokenize((tokenizeError, payload) => {
-      if(!tokenizeError) {
+      if (!tokenizeError) {
         success({
           customer_payment_method_id: null,
           payment_nonce: payload.nonce,
           payment_method_type: 'credit-card',
-          payment_processor: 'braintree',
+          payment_processor: 'braintree'
         });
       } else {
         error({
@@ -95,13 +106,17 @@ export class BraintreeCreditCardShopPaymentMethod extends ShopPaymentMethod {
   getRenderContext() {
     return {
       id: this.data.id,
-      title: this.t('payment_methods.shop_payment_methods.braintree.credit_card.title'),
+      title: this.t(
+        'payment_methods.shop_payment_methods.braintree.credit_card.title'
+      ),
       value: this.getValue(),
-      subfields_content: this.options.html_templates.braintree_credit_card_subfields_content,
+      subfields_content: this.options.html_templates
+        .braintree_credit_card_subfields_content,
       subfields_class: 'card-fields-container',
       icon: 'generic',
-      icon_description: this.t('payment_methods.shop_payment_methods.braintree.credit_card.icon_description')
-    }
+      icon_description: this.t(
+        'payment_methods.shop_payment_methods.braintree.credit_card.icon_description'
+      )
+    };
   }
-
 }
