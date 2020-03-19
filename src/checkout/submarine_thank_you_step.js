@@ -32,9 +32,9 @@ export class SubmarineThankYouStep extends CustardModule {
       /_(?=\d+$)/
     );
     this.paymentMethodData = allPaymentMethods.find(
-      paymentMethod =>
-        paymentMethod.type === paymentMethodName &&
-        Number(paymentMethod.id) === Number(paymentMethodId)
+      method =>
+        method.type === paymentMethodName &&
+        Number(method.id) === Number(paymentMethodId)
     );
     this.paymentMethodType = this.paymentMethodData.attributes.payment_method_type;
   }
