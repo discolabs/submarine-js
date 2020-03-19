@@ -131,6 +131,7 @@ export class SubmarinePaymentMethodStep extends CustardModule {
   }
 
   paymentMethodsSetupSuccess(result) {
+    // eslint-disable-next-line no-console
     console.log('Successfully loaded Submarine payment methods.', result);
   }
 
@@ -403,6 +404,7 @@ export class SubmarinePaymentMethodStep extends CustardModule {
 
   onPaymentMethodProcessingError(error) {
     this.stopLoading();
+    // eslint-disable-next-line no-alert
     alert(error.message);
   }
 
