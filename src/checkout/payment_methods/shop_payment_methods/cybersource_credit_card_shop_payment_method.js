@@ -16,7 +16,7 @@ const CYBERSOURCE_CARD_TYPE_MAPPINGS = {
 };
 
 const PUBLIC_KEY_ENCRYPTION_TYPE_NONE = 'none';
-const PUBLIC_KEY_ENCRYPTION_TYPE_RSAOAEP = 'rsaoaep';
+// const PUBLIC_KEY_ENCRYPTION_TYPE_RSAOAEP = 'rsaoaep';
 const PUBLIC_KEY_ENCRYPTION_TYPE_RSAOAEP256 = 'rsaoaep256';
 
 const KEY_TYPE_RSA = 'RSA';
@@ -153,7 +153,7 @@ export class CybersourceCreditCardShopPaymentMethod extends ShopPaymentMethod {
       .toggleClass('field--error field--submarine-error', false);
   }
 
-  process(success, error, additionalData) {
+  process(success, error) {
     const state = this.getState();
 
     const expiryMonthAsString = (state.expiry.value.month || '').toString();

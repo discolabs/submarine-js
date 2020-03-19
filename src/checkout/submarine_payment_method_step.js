@@ -138,7 +138,7 @@ export class SubmarinePaymentMethodStep extends CustardModule {
     console.error('Could not load Submarine payment methods.', result);
   }
 
-  paymentMethodsSetupComplete(result) {
+  paymentMethodsSetupComplete() {
     this.onShopifyGatewayChange();
     this.onSubmarinePaymentMethodChange();
   }

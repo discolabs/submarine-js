@@ -7,7 +7,7 @@ export class StripeCreditCardShopPaymentMethod extends ShopPaymentMethod {
     );
   }
 
-  setup(success, failure) {
+  setup() {
     this.stripe = Stripe(this.data.attributes.publishable_api_key);
     this.elements = this.stripe.elements({
       locale: this.options.shop.locale
@@ -73,7 +73,7 @@ export class StripeCreditCardShopPaymentMethod extends ShopPaymentMethod {
     };
   }
 
-  process(success, error, additionalData) {
+  process(success, error) {
     this.stripe
       .createToken(this.cardNumber, this.getAdditionalData())
       .then(result => {

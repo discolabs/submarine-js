@@ -98,7 +98,7 @@ export default class SubmarinePaymentMethod {
 
   beforeSetup() {}
 
-  setup(success, failure) {
+  setup(success) {
     success(true);
   }
 
@@ -130,5 +130,5 @@ export default class SubmarinePaymentMethod {
     return [];
   }
 
-  process(success, error, additionalData) {}
+  process() {}
 }

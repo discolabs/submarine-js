@@ -58,7 +58,7 @@ export class BraintreeApplePayShopPaymentMethod extends ShopPaymentMethod {
     return this.errors;
   }
 
-  process(success, error, additionalData) {
+  process(success, error) {
     const that = this;
 
     const paymentRequest = that.applePayInstance.createPaymentRequest({

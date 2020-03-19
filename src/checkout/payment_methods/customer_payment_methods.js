@@ -7,8 +7,7 @@ import { CustomerPaymentMethod } from './customer_payment_methods/customer_payme
  * @param customerPaymentMethod
  * @returns {CustomerPaymentMethod}
  */
-const getCustomerPaymentMethodClass = customerPaymentMethod =>
-  CustomerPaymentMethod;
+const getCustomerPaymentMethodClass = () => CustomerPaymentMethod;
 
 /**
  * Given a set of payment method options and a shop payment method type, return
