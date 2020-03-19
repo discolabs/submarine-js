@@ -53,10 +53,10 @@ export class SubmarinePaymentMethodStep extends CustardModule {
 
     // Get a list of configured Submarine payment methods.
     // This includes saved customer payment methods, and also shop payment methods.
-    this.paymentMethods = this.getPaymentMethods();
+    this.initializePaymentMethods();
 
     // Render Submarine payment method options.
-    this.$submarineGateway.before(this.renderPaymentMethods());
+    this.renderPaymentMethods();
 
     // Hide the Submarine payment method selector element, and remove the Submarine subfields element.
     this.$submarineGateway.hide();
@@ -119,6 +119,13 @@ export class SubmarinePaymentMethodStep extends CustardModule {
     this.submarine = window.submarine;
   }
 
+  initializePaymentMethods() {
+    const customizedShopPaymentMethods = this.options.paymentMethods || [];
+    this.paymentMethods = customizedShopPaymentMethods.concat(
+      this.getPaymentMethods()
+    );
+  }
+
   loadPaymentMethods() {
     Promise.all(
       this.paymentMethods
@@ -176,13 +183,15 @@ export class SubmarinePaymentMethodStep extends CustardModule {
   }
 
   renderPaymentMethods() {
-    return this.paymentMethods
+    const paymentMethods = this.paymentMethods
       .filter(payment_method => payment_method.shouldLoad())
       .reduce(
         (html, payment_method, index) =>
           html + payment_method.render(this.options.html_templates, index),
         ''
       );
+
+    this.$submarineGateway.before(paymentMethods);
   }
 
   onShopifyGatewayChange() {
