@@ -17,6 +17,7 @@
   ],
   "dependencies": {
     "@discolabs/custard-js": "^0.0.4",
+    "lodash": "^4.17.15",
     "payform": "^1.4.0"
   },
   "devDependencies": {

@@ -45,13 +45,9 @@ export class CustomerPaymentMethod extends SubmarinePaymentMethod {
   }
 
   paypalRenderContext() {
-    const title = this.t(
-      'payment_methods.customer_payment_methods.paypal.title'
-    ).replace('{{ email }}', this.data.attributes.payment_data.email);
-
     return {
       id: this.data.id,
-      title,
+      title: this.paypalTitle(),
       value: this.getValue(),
       icon: 'paypal',
       icon_description: 'Paypal'
@@ -59,13 +55,9 @@ export class CustomerPaymentMethod extends SubmarinePaymentMethod {
   }
 
   creditCardRenderContext() {
-    const title = this.t(
-      'payment_methods.customer_payment_methods.credit_card.title'
-    ).replace('{{ last4 }}', this.data.attributes.payment_data.last4);
-
     return {
       id: this.data.id,
-      title,
+      title: this.creditCardTitle(),
       value: this.getValue(),
       icon: this.data.attributes.payment_data.brand.toLowerCase(),
       icon_description: this.data.attributes.payment_data.brand
@@ -82,5 +74,31 @@ export class CustomerPaymentMethod extends SubmarinePaymentMethod {
       icon: '',
       icon_description: ''
     };
+  }
+
+  paypalTitle() {
+    const titleTranslation = this.t(
+      'payment_methods.customer_payment_methods.paypal.title'
+    );
+
+    return titleTranslation
+      ? titleTranslation.replace(
+          '{{ email }}',
+          this.data.attributes.payment_data.email
+        )
+      : `Saved Paypal account (${this.data.attributes.payment_data.email})`;
+  }
+
+  creditCardTitle() {
+    const titleTranslation = this.t(
+      'payment_methods.customer_payment_methods.credit_card.title'
+    );
+
+    return titleTranslation
+      ? titleTranslation.replace(
+          '{{ last4 }}',
+          this.data.attributes.payment_data.last4
+        )
+      : `Saved card ending in ${this.data.attributes.payment_data.last4}`;
   }
 }

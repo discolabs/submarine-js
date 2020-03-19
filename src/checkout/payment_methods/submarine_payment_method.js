@@ -1,46 +1,10 @@
+import get from 'lodash/get';
+
 const renderHtmlTemplate = (object, template_name, html_templates) =>
   Object.entries(object).reduce((output, value) => {
     const [k, v] = value;
     return output.replace(new RegExp(`{{ ${k} }}`, 'g'), v);
   }, html_templates[template_name]);
-
-/**
- * Given a translation key and a hash of translation values, return the
- * corresponding translated value with any interpolation applied, eg:
- *
- *   getTranslation(
- *     "submarine.checkout.expiry_date",
- *     {
- *       "submarine": {
- *         "checkout": {
- *           "expiry_date": "Expires {{ expiry_month }}/{{ expiry_year }}"
- *         }
- *       }
- *     }
- *   )
- *
- * returns:
- *
- *   "Expires {{ expiry_month }}/{{ expiry_year }}"
- *
- * If the translation key can't be found, this method simply returns the
- * supplied key.
- *
- * @param key
- * @param translations
- * @returns {string}
- */
-const getTranslation = (key, translations = {}) => {
-  let currentTranslation = translations;
-  // eslint-disable-next-line consistent-return
-  key.split('.').forEach(k => {
-    currentTranslation = currentTranslation[k];
-    if (typeof currentTranslation === 'undefined') {
-      return key;
-    }
-  });
-  return currentTranslation;
-};
 
 /**
  * Given a translation key, a hash of translation values, and an (optional)
@@ -78,7 +42,7 @@ const getInterpolatedTranslation = (key, translations = {}, values = {}) =>
   Object.entries(values).reduce((output, value) => {
     const [k, v] = value;
     return output.replace(`{{ ${k} }}`, v);
-  }, getTranslation(key, translations));
+  }, get(translations, key, ''));
 
 export default class SubmarinePaymentMethod {
   constructor($, options, translations, data) {
