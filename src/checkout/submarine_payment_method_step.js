@@ -368,7 +368,7 @@ export class SubmarinePaymentMethodStep extends CustardModule {
     // Find Apple Pay payment method.
     const applePayPaymentMethod = this.paymentMethods.find(
       paymentMethod =>
-        paymentMethod.data.attributes.payment_method_type == 'apple-pay'
+        paymentMethod.data.attributes.payment_method_type === 'apple-pay'
     );
 
     e.preventDefault();
