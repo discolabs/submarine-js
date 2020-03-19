@@ -121,9 +121,7 @@ export class ApiClient {
       body: payload
     })
       .then(response => response.json())
-      .then(json => {
-        callback && callback(json.data);
-      });
+      .then(json => callback && callback(json.data));
   }
 
   buildQueryParams(http_method, data) {
