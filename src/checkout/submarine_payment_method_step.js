@@ -314,6 +314,7 @@ export class SubmarinePaymentMethodStep extends CustardModule {
     return sortIndex === -1 ? 999 : sortIndex;
   }
 
+  // eslint-disable-next-line consistent-return
   onFormSubmit(e) {
     // If we've flagged the form as okay to submit, submit as normal.
     if (this.$form.attr('data-form-submarine-submit') === 'ok') {
@@ -338,7 +339,7 @@ export class SubmarinePaymentMethodStep extends CustardModule {
     const validationErrors = selectedPaymentMethod.validate();
     if (validationErrors.length) {
       this.stopLoading();
-      return;
+      return; // eslint-disable-line consistent-return
     }
 
     // Perform processing.
@@ -357,6 +358,7 @@ export class SubmarinePaymentMethodStep extends CustardModule {
     }
   }
 
+  // eslint-disable-next-line consistent-return
   onApplePayRequest(e) {
     // If we've flagged the form as okay to submit, submit as normal.
     if (this.$form.attr('data-form-submarine-submit') === 'ok') {
@@ -376,7 +378,7 @@ export class SubmarinePaymentMethodStep extends CustardModule {
     const validationErrors = applePayPaymentMethod.validate();
     if (validationErrors.length) {
       this.stopLoading();
-      return;
+      return; // eslint-disable-line consistent-return
     }
 
     // Perform processing.

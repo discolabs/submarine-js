@@ -32,6 +32,7 @@ const renderHtmlTemplate = (object, template_name, html_templates) =>
  */
 const getTranslation = (key, translations = {}) => {
   let currentTranslation = translations;
+  // eslint-disable-next-line consistent-return
   key.split('.').forEach(k => {
     currentTranslation = currentTranslation[k];
     if (typeof currentTranslation === 'undefined') {
