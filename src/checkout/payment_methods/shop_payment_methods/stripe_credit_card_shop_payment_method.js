@@ -8,6 +8,7 @@ export class StripeCreditCardShopPaymentMethod extends ShopPaymentMethod {
   }
 
   setup() {
+    // eslint-disable-next-line no-undef
     this.stripe = Stripe(this.data.attributes.publishable_api_key);
     this.elements = this.stripe.elements({
       locale: this.options.shop.locale

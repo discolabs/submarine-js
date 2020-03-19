@@ -41,7 +41,7 @@ export class CybersourceCreditCardShopPaymentMethod extends ShopPaymentMethod {
     this.$subfields.on('input', this.onInputChange.bind(this));
 
     // Start by generating a Cybersource client token and storing it for later use.
-    submarine.api
+    submarine.api // eslint-disable-line no-undef
       .generatePaymentProcessorClientToken('cybersource', client_token => {
         that.client_token = client_token;
 
@@ -173,6 +173,7 @@ export class CybersourceCreditCardShopPaymentMethod extends ShopPaymentMethod {
       production: this.options.submarine.environment === 'production'
     };
 
+    // eslint-disable-next-line no-undef
     flex.createToken(flexOptions, response => {
       if (!response.error) {
         success({

@@ -11,15 +11,16 @@ export class BraintreeCreditCardShopPaymentMethod extends ShopPaymentMethod {
     const that = this;
 
     // Start by generating a Braintree client token.
-    submarine.api
+    submarine.api // eslint-disable-line no-undef
       .generatePaymentProcessorClientToken('braintree', client_token => {
         // Then, create a Braintree client instance.
-        braintree.client
+        braintree.client // eslint-disable-line no-undef
           .create({
             authorization: client_token.attributes.token
           })
           .then(clientInstance =>
             // Next, set up the Hosted Fields instance.
+            // eslint-disable-next-line no-undef
             braintree.hostedFields.create(
               that.getHostedFieldsOptions(clientInstance)
             )

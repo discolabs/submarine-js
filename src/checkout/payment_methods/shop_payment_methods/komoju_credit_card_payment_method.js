@@ -2,6 +2,7 @@ import { ShopPaymentMethod } from './shop_payment_method';
 
 export class KomojuCreditCardShopPaymentMethod extends ShopPaymentMethod {
   process(success) {
+    // eslint-disable-next-line no-undef
     this.handler = Komoju.multipay.configure({
       key: this.data.attributes.publishable_api_key,
       token: token =>

@@ -4,8 +4,8 @@ export class BraintreeApplePayShopPaymentMethod extends ShopPaymentMethod {
   shouldLoad() {
     return (
       window.ApplePaySession &&
-      ApplePaySession.supportsVersion(3) &&
-      ApplePaySession.canMakePayments()
+      ApplePaySession.supportsVersion(3) && // eslint-disable-line no-undef
+      ApplePaySession.canMakePayments() // eslint-disable-line no-undef
     );
   }
 
@@ -14,15 +14,16 @@ export class BraintreeApplePayShopPaymentMethod extends ShopPaymentMethod {
     that.errors = [];
 
     // Start by generating a Braintree client token.
-    submarine.api
+    submarine.api // eslint-disable-line no-undef
       .generatePaymentProcessorClientToken('braintree', client_token => {
         // Then, create a Braintree client instance.
-        braintree.client
+        braintree.client // eslint-disable-line no-undef
           .create({
             authorization: client_token.attributes.token
           })
           .then(clientInstance =>
             // Next, set up the Apple Pay instance.
+            // eslint-disable-next-line no-undef
             braintree.applePay.create({ client: clientInstance })
           )
           .then(applePayInstance => {
@@ -30,6 +31,7 @@ export class BraintreeApplePayShopPaymentMethod extends ShopPaymentMethod {
 
             that.applePayInstance = applePayInstance;
 
+            // eslint-disable-next-line no-undef
             return ApplePaySession.canMakePaymentsWithActiveCard(
               applePayInstance.merchantIdentifier
             ).then(canMakePaymentsWithActiveCard => {
@@ -68,6 +70,7 @@ export class BraintreeApplePayShopPaymentMethod extends ShopPaymentMethod {
       }
     });
 
+    // eslint-disable-next-line no-undef
     const session = new ApplePaySession(3, paymentRequest);
 
     session.onvalidatemerchant = event => {
@@ -90,6 +93,7 @@ export class BraintreeApplePayShopPaymentMethod extends ShopPaymentMethod {
       that.applePayInstance
         .tokenize({ token: event.payment.token })
         .then(payload => {
+          // eslint-disable-next-line no-undef
           session.completePayment(ApplePaySession.STATUS_SUCCESS);
           success({
             customer_payment_method_id: null,
@@ -103,6 +107,7 @@ export class BraintreeApplePayShopPaymentMethod extends ShopPaymentMethod {
             message: tokenizeError
           });
           console.error('Error tokenizing Apple Pay:', tokenizeError);
+          // eslint-disable-next-line no-undef
           session.completePayment(ApplePaySession.STATUS_FAILURE);
         });
     };
