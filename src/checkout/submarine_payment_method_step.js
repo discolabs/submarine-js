@@ -121,9 +121,16 @@ export class SubmarinePaymentMethodStep extends CustardModule {
 
   initializePaymentMethods() {
     const customizedShopPaymentMethods = this.options.paymentMethods || [];
-    this.paymentMethods = customizedShopPaymentMethods.concat(
-      this.getPaymentMethods()
-    );
+
+    this.paymentMethods = customizedShopPaymentMethods
+      .map(method => {
+        method.$ = this.$;
+        method.options = this.options;
+        method.translations = this.options.submarine.translations;
+
+        return method;
+      })
+      .concat(this.getPaymentMethods());
   }
 
   loadPaymentMethods() {

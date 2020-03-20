@@ -63,10 +63,10 @@ export const createShopPaymentMethod = (
   shopPaymentMethod
 ) => {
   const ShopPaymentMethodClass = getShopPaymentMethodClass(shopPaymentMethod);
-  return new ShopPaymentMethodClass(
+  return new ShopPaymentMethodClass({
     $,
     options,
     translations,
-    shopPaymentMethod
-  );
+    data: shopPaymentMethod
+  });
 };

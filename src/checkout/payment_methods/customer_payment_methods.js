@@ -28,10 +28,10 @@ export const createCustomerPaymentMethod = (
   const CustomerPaymentMethodClass = getCustomerPaymentMethodClass(
     customerPaymentMethod
   );
-  return new CustomerPaymentMethodClass(
+  return new CustomerPaymentMethodClass({
     $,
     options,
     translations,
-    customerPaymentMethod
-  );
+    data: customerPaymentMethod
+  });
 };

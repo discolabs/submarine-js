@@ -45,11 +45,11 @@ const getInterpolatedTranslation = (key, translations = {}, values = {}) =>
   }, get(translations, key, ''));
 
 export default class SubmarinePaymentMethod {
-  constructor($, options, translations, data) {
-    this.$ = $;
-    this.options = options;
-    this.translations = translations;
-    this.data = data;
+  constructor(props) {
+    this.options = props.options;
+    this.$ = props.$;
+    this.translations = props.translations;
+    this.data = props.data;
   }
 
   shouldLoad() {
