@@ -1,8 +1,12 @@
-import { ShopPaymentMethod } from "./shop_payment_method";
+import { ShopPaymentMethod } from './shop_payment_method';
 
 export class BraintreeApplePayShopPaymentMethod extends ShopPaymentMethod {
   shouldLoad() {
-    return window.ApplePaySession && ApplePaySession.supportsVersion(3) && ApplePaySession.canMakePayments();
+    return (
+      window.ApplePaySession &&
+      ApplePaySession.supportsVersion(3) && // eslint-disable-line no-undef
+      ApplePaySession.canMakePayments() // eslint-disable-line no-undef
+    );
   }
 
   setup(success, failure) {
@@ -10,28 +14,32 @@ export class BraintreeApplePayShopPaymentMethod extends ShopPaymentMethod {
     that.errors = [];
 
     // Start by generating a Braintree client token.
-    submarine.api
-      .generatePaymentProcessorClientToken("braintree", client_token => {
+    submarine.api // eslint-disable-line no-undef
+      .generatePaymentProcessorClientToken('braintree', client_token => {
         // Then, create a Braintree client instance.
-        braintree.client
+        braintree.client // eslint-disable-line no-undef
           .create({
             authorization: client_token.attributes.token
           })
-          .then(clientInstance => {
+          .then(clientInstance =>
             // Next, set up the Apple Pay instance.
-            return braintree.applePay.create({ client: clientInstance });
-          })
+            // eslint-disable-next-line no-undef
+            braintree.applePay.create({ client: clientInstance })
+          )
           .then(applePayInstance => {
             // Finally, store a reference to the Apple Pay instance for later use.
 
             that.applePayInstance = applePayInstance;
 
-            return ApplePaySession.canMakePaymentsWithActiveCard(applePayInstance.merchantIdentifier).then(canMakePaymentsWithActiveCard => {
+            // eslint-disable-next-line no-undef
+            return ApplePaySession.canMakePaymentsWithActiveCard(
+              applePayInstance.merchantIdentifier
+            ).then(canMakePaymentsWithActiveCard => {
               if (canMakePaymentsWithActiveCard) {
                 that.applePayInstance = applePayInstance;
                 success();
               } else {
-                const error = "No active card was found.";
+                const error = 'No active card was found.';
                 that.errors = [...that.errors, error];
                 failure(error);
               }
@@ -52,17 +60,18 @@ export class BraintreeApplePayShopPaymentMethod extends ShopPaymentMethod {
     return this.errors;
   }
 
-  process(success, error, additionalData) {
-    let that = this;
+  process(success, error) {
+    const that = this;
 
-    let paymentRequest = that.applePayInstance.createPaymentRequest({
+    const paymentRequest = that.applePayInstance.createPaymentRequest({
       total: {
         label: that.options.shop.name,
         amount: that.options.checkout.total_price
       }
     });
 
-    let session = new ApplePaySession(3, paymentRequest);
+    // eslint-disable-next-line no-undef
+    const session = new ApplePaySession(3, paymentRequest);
 
     session.onvalidatemerchant = event => {
       that.applePayInstance
@@ -70,10 +79,12 @@ export class BraintreeApplePayShopPaymentMethod extends ShopPaymentMethod {
           validationURL: event.validationURL,
           displayName: that.options.shop.name
         })
-        .then(merchantSession => session.completeMerchantValidation(merchantSession))
+        .then(merchantSession =>
+          session.completeMerchantValidation(merchantSession)
+        )
         .catch(validationError => {
           // You should show an error to the user, e.g. 'Apple Pay failed to load.'
-          console.error("Error validating merchant:", validationError);
+          console.error('Error validating merchant:', validationError);
           session.abort();
         });
     };
@@ -82,19 +93,21 @@ export class BraintreeApplePayShopPaymentMethod extends ShopPaymentMethod {
       that.applePayInstance
         .tokenize({ token: event.payment.token })
         .then(payload => {
+          // eslint-disable-next-line no-undef
           session.completePayment(ApplePaySession.STATUS_SUCCESS);
           success({
             customer_payment_method_id: null,
             payment_nonce: payload.nonce,
-            payment_method_type: "apple-pay",
-            payment_processor: "braintree"
+            payment_method_type: 'apple-pay',
+            payment_processor: 'braintree'
           });
         })
         .catch(tokenizeError => {
           error({
             message: tokenizeError
           });
-          console.error("Error tokenizing Apple Pay:", tokenizeError);
+          console.error('Error tokenizing Apple Pay:', tokenizeError);
+          // eslint-disable-next-line no-undef
           session.completePayment(ApplePaySession.STATUS_FAILURE);
         });
     };
@@ -105,12 +118,17 @@ export class BraintreeApplePayShopPaymentMethod extends ShopPaymentMethod {
   getRenderContext() {
     return {
       id: this.data.id,
-      title: this.t("payment_methods.shop_payment_methods.braintree.apple_pay.title"),
+      title: this.t(
+        'payment_methods.shop_payment_methods.braintree.apple_pay.title'
+      ),
       value: this.getValue(),
-      subfields_content: this.options.html_templates.braintree_apple_pay_subfields_content,
+      subfields_content: this.options.html_templates
+        .braintree_apple_pay_subfields_content,
       subfields_class: 'card-fields-container',
-      icon: "generic",
-      icon_description: this.t("payment_methods.shop_payment_methods.braintree.apple_pay.icon_description")
+      icon: 'generic',
+      icon_description: this.t(
+        'payment_methods.shop_payment_methods.braintree.apple_pay.icon_description'
+      )
     };
   }
 }
