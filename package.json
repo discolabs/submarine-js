@@ -1,6 +1,6 @@
 {
   "name": "@discolabs/submarine-js",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Javascript client library for Submarine.",
   "main": "index.js",
   "author": "Gavin Ballard",
