@@ -29,6 +29,7 @@ const config = {
       file: 'dist/index.mjs.js',
       format: 'es',
       indent: false,
+      plugins: [terser()],
       globals
     },
     {
@@ -43,6 +44,7 @@ const config = {
       format: 'umd',
       name: 'Submarine',
       indent: false,
+      plugins: [terser()],
       globals
     }
   ],
@@ -63,9 +65,5 @@ const config = {
     })
   ]
 };
-
-if (process.env.NODE_ENV === 'production') {
-  config.plugins.push(terser());
-}
 
 export default config;
