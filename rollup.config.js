@@ -16,49 +16,40 @@ const config = {
     {
       file: pkg.main,
       format: 'cjs',
-      indent: false,
       globals
     },
     {
       file: pkg.module,
-      format: 'es',
-      indent: false,
-      globals
+      format: 'es'
     },
     {
       file: 'dist/index.mjs.js',
       format: 'es',
-      indent: false,
       plugins: [terser()],
       globals
     },
     {
       file: pkg.unpkg,
       format: 'umd',
-      name: 'Submarine',
-      indent: false,
+      name: 'SubmarineJS',
       globals
     },
     {
       file: 'dist/submarine.min.js',
       format: 'umd',
-      name: 'Submarine',
-      indent: false,
+      name: 'SubmarineJS',
       plugins: [terser()],
       globals
     }
   ],
   external: Object.keys(pkg.dependencies).concat(['fs', 'path']),
   plugins: [
+    commonjs({
+      include: /node_modules/
+    }),
     nodeResolve(),
     babel({
       exclude: 'node_modules/**'
-    }),
-    commonjs({
-      include: /node_modules/,
-      namedExports: {
-        'node_modules/lodash/index.js': ['get']
-      }
     }),
     replace({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
