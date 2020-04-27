@@ -1,5 +1,5 @@
 import { CustardModule, STEP_PAYMENT_METHOD } from '@discolabs/custard-js';
-
+import { DateTime } from 'luxon';
 import { Submarine } from '../submarine';
 import { createShopPaymentMethod } from './payment_methods/shop_payment_methods';
 import { createCustomerPaymentMethod } from './payment_methods/customer_payment_methods';
@@ -166,15 +166,16 @@ export class SubmarinePaymentMethodStep extends CustardModule {
   }
 
   getCustomerPaymentMethods() {
-    return this.options.submarine.customer_payment_methods.data.map(
-      customer_payment_method =>
+    return this.options.submarine.customer_payment_methods.data
+      .filter(customerPaymentMethod => this.isValidCard(customerPaymentMethod))
+      .map(customerPaymentMethod =>
         createCustomerPaymentMethod(
           this.$,
           this.options,
           this.options.submarine.translations,
-          customer_payment_method
+          customerPaymentMethod
         )
-    );
+      );
   }
 
   getShopPaymentMethods() {
@@ -469,5 +470,21 @@ export class SubmarinePaymentMethodStep extends CustardModule {
 
   stopLoading() {
     this.$submitButton.removeClass('btn--loading').prop('disabled', false);
+  }
+
+  isValidCard(customerPaymentMethod) {
+    const expiresAtISO = customerPaymentMethod.attributes.expires_at;
+
+    if (expiresAtISO) {
+      const expiresAtParts = expiresAtISO.split('-');
+      const year = Number(expiresAtParts[0]);
+      const month = Number(expiresAtParts[1]);
+      const expiresAt = DateTime.fromObject(year, month).endOf('month');
+      const currentTime = DateTime.local();
+
+      return currentTime > expiresAt;
+    }
+
+    return true;
   }
 }
