@@ -482,7 +482,7 @@ export class SubmarinePaymentMethodStep extends CustardModule {
       const expiresAt = DateTime.fromObject(year, month).endOf('month');
       const currentTime = DateTime.local();
 
-      return currentTime > expiresAt;
+      return currentTime < expiresAt;
     }
 
     return true;
