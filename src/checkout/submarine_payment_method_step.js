@@ -479,7 +479,7 @@ export class SubmarinePaymentMethodStep extends CustardModule {
       const expiresAtParts = expiresAtISO.split('-');
       const year = Number(expiresAtParts[0]);
       const month = Number(expiresAtParts[1]);
-      const expiresAt = DateTime.fromObject(year, month).endOf('month');
+      const expiresAt = DateTime.fromObject({ year, month }).endOf('month');
       const currentTime = DateTime.local();
 
       return currentTime < expiresAt;
