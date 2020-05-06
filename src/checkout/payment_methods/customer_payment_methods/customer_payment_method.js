@@ -1,8 +1,5 @@
 import SubmarinePaymentMethod from '../submarine_payment_method';
-
-const CARD_ICON_CLASS_MAPPINGS = {
-  mastercard: 'master'
-};
+import { CARD_ICON_CLASS_MAPPINGS } from '../../../constants';
 
 export class CustomerPaymentMethod extends SubmarinePaymentMethod {
   getValue() {
@@ -111,8 +108,7 @@ export class CustomerPaymentMethod extends SubmarinePaymentMethod {
       .match(/[a-zA-Z ]+/)[0]
       .toLowerCase()
       .trim()
-      .split(' ')
-      .join('-');
+      .replace(' ', '-');
 
     return CARD_ICON_CLASS_MAPPINGS[brand] || brand;
   }

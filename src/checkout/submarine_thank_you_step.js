@@ -3,6 +3,7 @@ import {
   STEP_THANK_YOU,
   STEP_ORDER_STATUS
 } from '@discolabs/custard-js';
+import { CARD_ICON_CLASS_MAPPINGS } from '../constants';
 
 export class SubmarineThankYouStep extends CustardModule {
   id() {
@@ -57,12 +58,10 @@ export class SubmarineThankYouStep extends CustardModule {
   }
 
   iconName() {
-    if (this.isShopPaymentMethod()) {
-      if (this.isCreditCard()) return 'generic';
-      return this.paymentMethodType;
-    }
+    if (!this.isShopPaymentMethod()) return this.cardIcon();
+    if (this.isCreditCard()) return 'generic';
 
-    return this.cardBrand();
+    return this.paymentMethodType;
   }
 
   isShopPaymentMethod() {
@@ -77,9 +76,13 @@ export class SubmarineThankYouStep extends CustardModule {
     return this.paymentMethodType === 'bank-transfer';
   }
 
-  cardBrand() {
-    return this.paymentMethodData.attributes.payment_data.brand
-      .replace(/\s+/g, '-')
-      .toLowerCase();
+  cardIcon() {
+    const brand = this.paymentMethodData.attributes.payment_data.brand
+      .match(/[a-zA-Z ]+/)[0]
+      .toLowerCase()
+      .trim()
+      .replace(' ', '-');
+
+    return CARD_ICON_CLASS_MAPPINGS[brand] || brand;
   }
 }
