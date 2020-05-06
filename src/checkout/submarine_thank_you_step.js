@@ -21,6 +21,7 @@ export class SubmarineThankYouStep extends CustardModule {
   setup() {
     this.findPaymentMethodData();
     this.updatePaymentMethodIcon();
+    this.updateCardLast4();
   }
 
   findPaymentMethodData() {
@@ -50,6 +51,12 @@ export class SubmarineThankYouStep extends CustardModule {
 
     this.$paymentIcon.removeClass('payment-icon--generic');
     this.$paymentIcon.addClass(`payment-icon--${this.iconName()}`);
+  }
+
+  updateCardLast4() {
+    if (!this.isShopPaymentMethod()) {
+      this.$paymentIcon.after(`<span>${this.cardLast4Detail()}</span>`);
+    }
   }
 
   bankTransferTitle() {
@@ -84,5 +91,16 @@ export class SubmarineThankYouStep extends CustardModule {
       .replace(' ', '-');
 
     return CARD_ICON_CLASS_MAPPINGS[brand] || brand;
+  }
+
+  cardLast4Detail() {
+    const { last4 } = this.paymentMethodData.attributes.payment_data;
+    const thankYouTranslations = this.options.submarine.translations.thank_you;
+    const cardLast4Translation =
+      thankYouTranslations && thankYouTranslations.card_last4;
+
+    return cardLast4Translation
+      ? cardLast4Translation.replace('{{ last4 }}', last4)
+      : `ending with ${last4}`;
   }
 }
