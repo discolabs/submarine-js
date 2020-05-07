@@ -65,7 +65,8 @@ export class SubmarineThankYouStep extends CustardModule {
   }
 
   iconName() {
-    if (!this.isShopPaymentMethod()) return this.cardIcon();
+    if (!this.isShopPaymentMethod() && this.isCreditCard())
+      return this.cardIcon();
     if (this.isCreditCard()) return 'generic';
 
     return this.paymentMethodType;
