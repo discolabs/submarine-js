@@ -54,7 +54,7 @@ export class SubmarineThankYouStep extends CustardModule {
   }
 
   updateCardLast4() {
-    if (!this.isShopPaymentMethod()) {
+    if (!this.isShopPaymentMethod() && this.isCreditCard()) {
       this.$paymentIcon.after(`<span>${this.cardLast4Detail()}</span>`);
     }
   }
