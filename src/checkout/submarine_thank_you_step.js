@@ -3,6 +3,7 @@ import {
   STEP_THANK_YOU,
   STEP_ORDER_STATUS
 } from '@discolabs/custard-js';
+import { CARD_ICON_CLASS_MAPPINGS } from '../constants';
 
 export class SubmarineThankYouStep extends CustardModule {
   id() {
@@ -20,6 +21,7 @@ export class SubmarineThankYouStep extends CustardModule {
   setup() {
     this.findPaymentMethodData();
     this.updatePaymentMethodIcon();
+    this.updateCardLast4();
   }
 
   findPaymentMethodData() {
@@ -51,18 +53,23 @@ export class SubmarineThankYouStep extends CustardModule {
     this.$paymentIcon.addClass(`payment-icon--${this.iconName()}`);
   }
 
+  updateCardLast4() {
+    if (!this.isShopPaymentMethod() && this.isCreditCard()) {
+      this.$paymentIcon.after(`<span>${this.cardLast4Detail()}</span>`);
+    }
+  }
+
   bankTransferTitle() {
     return this.options.submarine.translations.payment_methods
       .shop_payment_methods.submarine.bank_transfer.title;
   }
 
   iconName() {
-    if (this.isShopPaymentMethod()) {
-      if (this.isCreditCard()) return 'generic';
-      return this.paymentMethodType;
-    }
+    if (!this.isShopPaymentMethod() && this.isCreditCard())
+      return this.cardIcon();
+    if (this.isCreditCard()) return 'generic';
 
-    return this.cardBrand();
+    return this.paymentMethodType;
   }
 
   isShopPaymentMethod() {
@@ -77,9 +84,24 @@ export class SubmarineThankYouStep extends CustardModule {
     return this.paymentMethodType === 'bank-transfer';
   }
 
-  cardBrand() {
-    return this.paymentMethodData.attributes.payment_data.brand
-      .replace(/\s+/g, '-')
-      .toLowerCase();
+  cardIcon() {
+    const brand = this.paymentMethodData.attributes.payment_data.brand
+      .match(/[a-zA-Z ]+/)[0]
+      .toLowerCase()
+      .trim()
+      .replace(' ', '-');
+
+    return CARD_ICON_CLASS_MAPPINGS[brand] || brand;
+  }
+
+  cardLast4Detail() {
+    const { last4 } = this.paymentMethodData.attributes.payment_data;
+    const thankYouTranslations = this.options.submarine.translations.thank_you;
+    const cardLast4Translation =
+      thankYouTranslations && thankYouTranslations.card_last4;
+
+    return cardLast4Translation
+      ? cardLast4Translation.replace('{{ last4 }}', last4)
+      : `ending with ${last4}`;
   }
 }
