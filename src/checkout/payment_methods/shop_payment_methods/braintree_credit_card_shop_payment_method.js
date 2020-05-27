@@ -52,6 +52,7 @@ export class BraintreeCreditCardShopPaymentMethod extends ShopPaymentMethod {
       styles: {
         input: {
           color: '#333333',
+          margin: '-1px 0 0 0',
           'font-size': '14px',
           'font-family':
             '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif'
