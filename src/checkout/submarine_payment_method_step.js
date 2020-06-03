@@ -356,7 +356,9 @@ export class SubmarinePaymentMethodStep extends CustardModule {
     const validationErrors = selectedPaymentMethod.validate();
     if (validationErrors.length) {
       this.stopLoading();
-      return; // eslint-disable-line consistent-return
+      this.renderErrorNotices(validationErrors);
+
+      return false;
     }
 
     // Perform processing.
@@ -486,5 +488,41 @@ export class SubmarinePaymentMethodStep extends CustardModule {
     }
 
     return true;
+  }
+
+  renderErrorNotices(errors) {
+    const $paymentMethodSectionContent = this.$element.find(
+      '.section__content'
+    );
+    const $existingCardErrorNotices = $paymentMethodSectionContent.find(
+      '.card-input-error-notice'
+    );
+
+    $existingCardErrorNotices.remove();
+    errors
+      .map(error => this.errorNoticeHtml(error).trim())
+      .forEach(errorNoticeHtmlString => {
+        const errorNoticeHtml = this.$.parseHTML(errorNoticeHtmlString);
+        $paymentMethodSectionContent.prepend(this.$(errorNoticeHtml));
+      });
+  }
+
+  errorNoticeHtml(message) {
+    return `
+      <div
+        class="notice notice--error default-background card-input-error-notice"
+        data-banner="true"
+        role="alert"
+        tabindex="-1"
+        aria-atomic="true"
+        aria-live="polite">
+        <svg class="icon-svg icon-svg--size-24 notice__icon" aria-hidden="true" focusable="false">
+          <use xlink:href="#error"></use>
+        </svg>
+        <div class="notice__content">
+          <p class="notice__text">${message}</p>
+        </div>
+      </div>
+    `;
   }
 }
