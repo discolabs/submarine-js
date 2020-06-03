@@ -33,7 +33,7 @@ export class BraintreeCreditCardShopPaymentMethod extends ShopPaymentMethod {
             this.$subfields.addClass(
               'card-fields-container--loaded card-fields-container--transitioned'
             );
-            this.$subfields.find('iframe').css({ height: '18px' });
+            this.$subfields.find('iframe').css({ height: '44px' });
 
             success();
           })
@@ -53,6 +53,7 @@ export class BraintreeCreditCardShopPaymentMethod extends ShopPaymentMethod {
         input: {
           color: '#333333',
           margin: '-1px 0 0 0',
+          padding: '0.94em 0.8em',
           'font-size': '14px',
           'font-family':
             '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif'
