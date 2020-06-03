@@ -58,22 +58,7 @@ export class BraintreeCreditCardShopPaymentMethod extends ShopPaymentMethod {
             '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif'
         }
       },
-      fields: {
-        number: {
-          selector: '#braintree-credit-card-card-number',
-          placeholder: this.t('checkout.credit_card.number_placeholder')
-        },
-        expirationDate: {
-          selector: '#braintree-credit-card-expiration-date',
-          placeholder: this.t(
-            'checkout.credit_card.expiration_date_placeholder'
-          )
-        },
-        cvv: {
-          selector: '#braintree-credit-card-cvv',
-          placeholder: this.t('checkout.credit_card.cvv_placeholder')
-        }
-      }
+      fields: this.creditCardFields()
     };
   }
 
@@ -92,6 +77,7 @@ export class BraintreeCreditCardShopPaymentMethod extends ShopPaymentMethod {
     this.hostedFieldsInstance.tokenize((tokenizeError, payload) => {
       if (!tokenizeError) {
         success({
+          shop_payment_method_id: this.data.id,
           customer_payment_method_id: null,
           payment_nonce: payload.nonce,
           payment_method_type: 'credit-card',
@@ -112,13 +98,47 @@ export class BraintreeCreditCardShopPaymentMethod extends ShopPaymentMethod {
         'payment_methods.shop_payment_methods.braintree.credit_card.title'
       ),
       value: this.getValue(),
-      subfields_content: this.options.html_templates
-        .braintree_credit_card_subfields_content,
+      subfields_content: this.subfieldsContent(),
       subfields_class: 'card-fields-container',
       icon: 'generic',
       icon_description: this.t(
         'payment_methods.shop_payment_methods.braintree.credit_card.icon_description'
-      )
+      ),
+      single_use: this.isSingleUse()
     };
+  }
+
+  subfieldsContent() {
+    return this.isSingleUse()
+      ? this.options.html_templates
+          .braintree_credit_card_single_use_subfields_content
+      : this.options.html_templates.braintree_credit_card_subfields_content;
+  }
+
+  creditCardFields() {
+    return {
+      number: {
+        selector: `#braintree-credit-card-card-number${
+          this.isSingleUse() ? '-single-use' : ''
+        }`,
+        placeholder: this.t('checkout.credit_card.number_placeholder')
+      },
+      expirationDate: {
+        selector: `#braintree-credit-card-expiration-date${
+          this.isSingleUse() ? '-single-use' : ''
+        }`,
+        placeholder: this.t('checkout.credit_card.expiration_date_placeholder')
+      },
+      cvv: {
+        selector: `#braintree-credit-card-cvv${
+          this.isSingleUse() ? '-single-use' : ''
+        }`,
+        placeholder: this.t('checkout.credit_card.cvv_placeholder')
+      }
+    };
+  }
+
+  isSingleUse() {
+    return !!this.data.attributes.single_use;
   }
 }
