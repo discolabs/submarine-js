@@ -96,6 +96,7 @@ export class BraintreeApplePayShopPaymentMethod extends ShopPaymentMethod {
           // eslint-disable-next-line no-undef
           session.completePayment(ApplePaySession.STATUS_SUCCESS);
           success({
+            shop_payment_method_id: this.data.id,
             customer_payment_method_id: null,
             payment_nonce: payload.nonce,
             payment_method_type: 'apple-pay',

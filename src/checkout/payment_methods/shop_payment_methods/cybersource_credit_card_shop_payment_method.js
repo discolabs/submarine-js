@@ -177,6 +177,7 @@ export class CybersourceCreditCardShopPaymentMethod extends ShopPaymentMethod {
     flex.createToken(flexOptions, response => {
       if (!response.error) {
         success({
+          shop_payment_method_id: this.data.id,
           customer_payment_method_id: null,
           payment_nonce: response.token,
           payment_method_type: 'credit-card',
