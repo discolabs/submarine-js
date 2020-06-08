@@ -1,5 +1,9 @@
 import { ShopPaymentMethod } from './shop_payment_method';
 
+const NUMBER_ERROR = 'Please enter a valid card number';
+const EXPIRATION_DATE_ERROR = 'Please enter a valid expiration date';
+const CVV_ERROR = 'Please enter a valid CVV';
+
 export class BraintreeCreditCardShopPaymentMethod extends ShopPaymentMethod {
   beforeSetup() {
     this.$subfields = this.$(
@@ -65,13 +69,9 @@ export class BraintreeCreditCardShopPaymentMethod extends ShopPaymentMethod {
 
   validate() {
     const state = this.hostedFieldsInstance.getState();
-    const errors = [];
-    Object.keys(state.fields).forEach(key => {
-      if (!state.fields[key].isValid) {
-        errors.push(key);
-      }
-    });
-    return errors;
+    return Object.entries(state.fields)
+      .filter(field => !field[1].isValid)
+      .map(field => this.fieldErrors()[field[0]]);
   }
 
   process(success, error) {
@@ -141,5 +141,22 @@ export class BraintreeCreditCardShopPaymentMethod extends ShopPaymentMethod {
 
   isSingleUse() {
     return !!this.data.attributes.single_use;
+  }
+
+  fieldErrors() {
+    return {
+      expirationDate:
+        this.t(
+          'payment_methods.shop_payment_methods.braintree.credit_card.expiration_date_error'
+        ) || EXPIRATION_DATE_ERROR,
+      cvv:
+        this.t(
+          'payment_methods.shop_payment_methods.braintree.credit_card.cvv_error'
+        ) || CVV_ERROR,
+      number:
+        this.t(
+          'payment_methods.shop_payment_methods.braintree.credit_card.number_error'
+        ) || NUMBER_ERROR
+    };
   }
 }
