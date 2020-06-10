@@ -3,6 +3,7 @@ import { ShopPaymentMethod } from './shop_payment_method';
 export class SubmarineBankTransferShopPaymentMethod extends ShopPaymentMethod {
   process(success) {
     success({
+      shop_payment_method_id: this.data.id,
       customer_payment_method_id: null,
       payment_nonce: null,
       payment_method_type: 'bank-transfer',

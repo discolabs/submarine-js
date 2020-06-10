@@ -7,6 +7,7 @@ export class KomojuCreditCardShopPaymentMethod extends ShopPaymentMethod {
       key: this.data.attributes.publishable_api_key,
       token: token =>
         success({
+          shop_payment_method_id: this.data.id,
           customer_payment_method_id: null,
           payment_nonce: token.id,
           payment_method_type: 'credit-card',

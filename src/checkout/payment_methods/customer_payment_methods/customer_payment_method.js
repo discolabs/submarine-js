@@ -1,4 +1,5 @@
 import SubmarinePaymentMethod from '../submarine_payment_method';
+import { CARD_ICON_CLASS_MAPPINGS } from '../../../constants';
 
 export class CustomerPaymentMethod extends SubmarinePaymentMethod {
   getValue() {
@@ -59,7 +60,7 @@ export class CustomerPaymentMethod extends SubmarinePaymentMethod {
       id: this.data.id,
       title: this.creditCardTitle(),
       value: this.getValue(),
-      icon: this.data.attributes.payment_data.brand.toLowerCase(),
+      icon: this.creditCardIcon(),
       icon_description: this.data.attributes.payment_data.brand
     };
   }
@@ -100,5 +101,15 @@ export class CustomerPaymentMethod extends SubmarinePaymentMethod {
           this.data.attributes.payment_data.last4
         )
       : `Saved card ending in ${this.data.attributes.payment_data.last4}`;
+  }
+
+  creditCardIcon() {
+    const brand = this.data.attributes.payment_data.brand
+      .match(/[a-zA-Z ]+/)[0]
+      .toLowerCase()
+      .trim()
+      .replace(' ', '-');
+
+    return CARD_ICON_CLASS_MAPPINGS[brand] || brand;
   }
 }
