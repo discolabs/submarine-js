@@ -1,5 +1,5 @@
 import { CustardModule, STEP_PAYMENT_METHOD } from '@discolabs/custard-js';
-
+import { DateTime } from 'luxon';
 import { Submarine } from '../submarine';
 import { createShopPaymentMethod } from './payment_methods/shop_payment_methods';
 import { createCustomerPaymentMethod } from './payment_methods/customer_payment_methods';
@@ -166,15 +166,16 @@ export class SubmarinePaymentMethodStep extends CustardModule {
   }
 
   getCustomerPaymentMethods() {
-    return this.options.submarine.customer_payment_methods.data.map(
-      customer_payment_method =>
+    return this.options.submarine.customer_payment_methods.data
+      .filter(customerPaymentMethod => this.isValidCard(customerPaymentMethod))
+      .map(customerPaymentMethod =>
         createCustomerPaymentMethod(
           this.$,
           this.options,
           this.options.submarine.translations,
-          customer_payment_method
+          customerPaymentMethod
         )
-    );
+      );
   }
 
   getShopPaymentMethods() {
@@ -355,7 +356,9 @@ export class SubmarinePaymentMethodStep extends CustardModule {
     const validationErrors = selectedPaymentMethod.validate();
     if (validationErrors.length) {
       this.stopLoading();
-      return; // eslint-disable-line consistent-return
+      this.renderErrorNotices(validationErrors);
+
+      return false;
     }
 
     // Perform processing.
@@ -469,5 +472,57 @@ export class SubmarinePaymentMethodStep extends CustardModule {
 
   stopLoading() {
     this.$submitButton.removeClass('btn--loading').prop('disabled', false);
+  }
+
+  isValidCard(customerPaymentMethod) {
+    const expiresAtISO = customerPaymentMethod.attributes.expires_at;
+
+    if (expiresAtISO) {
+      const expiresAtParts = expiresAtISO.split('-');
+      const year = Number(expiresAtParts[0]);
+      const month = Number(expiresAtParts[1]);
+      const expiresAt = DateTime.fromObject({ year, month }).endOf('month');
+      const currentTime = DateTime.local();
+
+      return currentTime < expiresAt;
+    }
+
+    return true;
+  }
+
+  renderErrorNotices(errors) {
+    const $paymentMethodSectionContent = this.$element.find(
+      '.section__content'
+    );
+    const $existingCardErrorNotices = $paymentMethodSectionContent.find(
+      '.card-input-error-notice'
+    );
+
+    $existingCardErrorNotices.remove();
+    errors
+      .map(error => this.errorNoticeHtml(error).trim())
+      .forEach(errorNoticeHtmlString => {
+        const errorNoticeHtml = this.$.parseHTML(errorNoticeHtmlString);
+        $paymentMethodSectionContent.prepend(this.$(errorNoticeHtml));
+      });
+  }
+
+  errorNoticeHtml(message) {
+    return `
+      <div
+        class="notice notice--error default-background card-input-error-notice"
+        data-banner="true"
+        role="alert"
+        tabindex="-1"
+        aria-atomic="true"
+        aria-live="polite">
+        <svg class="icon-svg icon-svg--size-24 notice__icon" aria-hidden="true" focusable="false">
+          <use xlink:href="#error"></use>
+        </svg>
+        <div class="notice__content">
+          <p class="notice__text">${message}</p>
+        </div>
+      </div>
+    `;
   }
 }
