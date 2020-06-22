@@ -75,21 +75,28 @@ export class BraintreeCreditCardShopPaymentMethod extends ShopPaymentMethod {
   }
 
   process(success, error) {
-    this.hostedFieldsInstance.tokenize((tokenizeError, payload) => {
-      if (!tokenizeError) {
-        success({
-          shop_payment_method_id: this.data.id,
-          customer_payment_method_id: null,
-          payment_nonce: payload.nonce,
-          payment_method_type: 'credit-card',
-          payment_processor: 'braintree'
-        });
-      } else {
-        error({
-          message: null // Braintree's UI will display an appropriate error message.
-        });
+    this.hostedFieldsInstance.tokenize(
+      {
+        cardholderName: this.$(
+          '[name="braintree_hosted_fields_name_on_card"]:visible'
+        ).val()
+      },
+      (tokenizeError, payload) => {
+        if (!tokenizeError) {
+          success({
+            shop_payment_method_id: this.data.id,
+            customer_payment_method_id: null,
+            payment_nonce: payload.nonce,
+            payment_method_type: 'credit-card',
+            payment_processor: 'braintree'
+          });
+        } else {
+          error({
+            message: null // Braintree's UI will display an appropriate error message.
+          });
+        }
       }
-    });
+    );
   }
 
   getRenderContext() {
