@@ -22,12 +22,15 @@ const API_METHODS = {
   },
   duplicate_subscription: {
     http_method: POST,
-    endpoint:
-      '/customers/{{ customer_id }}/subscriptions/{{ id }}/duplicate.json'
+    endpoint: '/customers/{{ customer_id }}/subscriptions/{{ id }}/duplicate.json'
   },
   update_subscription: {
     http_method: PUT,
     endpoint: '/customers/{{ customer_id }}/subscriptions/{{ id }}.json'
+  },
+  bulk_update_subscriptions: {
+    http_method: POST,
+    endpoint: '/customers/{{ customer_id }}/subscriptions/bulk_update.json'
   },
   cancel_subscription: {
     http_method: DELETE,
@@ -160,6 +163,21 @@ export class ApiClient {
   updateSubscription(id, subscription, callback) {
     const context = { ...this.context, id };
     return this.execute('update_subscription', subscription, context, callback);
+  }
+
+  bulkUpdateSubscriptions(subscription_ids, subscription, callback) {
+    const payload = {
+      bulk_update: {
+        subscription_ids,
+        subscription
+      }
+    };
+    return this.execute(
+      'bulk_update_subscriptions',
+      payload,
+      this.context,
+      callback
+    );
   }
 
   cancelSubscription(id, callback) {
