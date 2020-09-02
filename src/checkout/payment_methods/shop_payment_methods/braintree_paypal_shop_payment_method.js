@@ -56,18 +56,18 @@ export class BraintreePaypalShopPaymentMethod extends ShopPaymentMethod {
 
     return this.paypalCheckoutInstance.createPayment({
       flow: 'vault',
-      billingAgreementDescription: that.options.translations.billing_agreement_description,
+      billingAgreementDescription: that.translations.payment_methods.shop_payment_methods.paypal.paypal_billing_agreement_description,
       enableShippingAddress: true,
       shippingAddressEditable: false,
       shippingAddressOverride: {
-        recipientName: that.options.shipping_address.name,
-        line1: that.options.shipping_address.address1,
-        line2: that.options.shipping_address.address2,
-        city: that.options.shipping_address.city,
-        countryCode: that.options.shipping_address.country_code,
-        postalCode: that.options.shipping_address.zip,
-        state: that.options.shipping_address.province_code,
-        phone: that.options.shipping_address.phone
+        recipientName: that.options.checkout.shipping_address.name,
+        line1: that.options.checkout.shipping_address.address1,
+        line2: that.options.checkout.shipping_address.address2,
+        city: that.options.checkout.shipping_address.city,
+        countryCode: that.options.checkout.shipping_address.country_code,
+        postalCode: that.options.checkout.shipping_address.zip,
+        state: that.options.checkout.shipping_address.province_code,
+        phone: that.options.checkout.shipping_address.phone
       }
     });
   }
