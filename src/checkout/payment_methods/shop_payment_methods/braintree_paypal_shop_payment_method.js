@@ -77,7 +77,7 @@ export class BraintreePaypalShopPaymentMethod extends ShopPaymentMethod {
 
     return this.paypalCheckoutInstance.tokenizePayment(data, (error, payload) => {
       if (error) {
-        that.setError(this.options.translations.paypal_error_unknown);
+        that.setError(this.translations.payment_methods.shop_payment_methods.paypal_error_unknown);
         return;
       }
 
@@ -92,16 +92,16 @@ export class BraintreePaypalShopPaymentMethod extends ShopPaymentMethod {
 
   onError(error) {
     this.billingAgreementNonce = null;
-    this.setError(this.options.translations.paypal_error_unknown);
+    this.setError(this.translations.payment_methods.shop_payment_methods.paypal_error_unknown);
   }
 
   validate() {
     if (!this.paypalButtonReady) {
-      return [this.setError(this.options.translations.paypal_error_not_ready)];
+      return [this.setError(this.translations.payment_methods.shop_payment_methods.paypal_error_not_ready)];
     }
 
     if (!this.billingAgreementNonce) {
-      return [this.setError(this.options.translations.paypal_error_not_approved)];
+      return [this.setError(this.translations.payment_methods.shop_payment_methods.paypal_error_not_approved)];
     }
 
     return [];
@@ -110,14 +110,14 @@ export class BraintreePaypalShopPaymentMethod extends ShopPaymentMethod {
   setError(message) {
     this.$container.removeClass('braintree-paypal--has-success');
     this.$container.toggleClass('braintree-paypal--has-error', !!message);
-    this.$message.text(message || this.options.translations.paypal_instructions);
+    this.$message.text(message || this.translations.payment_methods.shop_payment_methods.paypal.paypal_instructions);
     return message;
   }
 
   setSuccess() {
     this.$container.removeClass('braintree-paypal--has-error');
     this.$container.addClass('braintree-paypal--has-success');
-    this.$message.text(this.options.translations.paypal_success);
+    this.$message.text(this.translations.payment_methods.shop_payment_methods.paypal_success);
   }
 
   process(callbacks) {
