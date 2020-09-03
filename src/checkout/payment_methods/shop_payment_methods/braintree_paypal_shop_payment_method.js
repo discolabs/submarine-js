@@ -18,41 +18,53 @@ export class BraintreePaypalShopPaymentMethod extends ShopPaymentMethod {
     this.$container = this.$('#braintree-paypal-container');
     this.$message = this.$container.find('.braintree-paypal-message');
 
-    submarine.api.generatePaymentProcessorClientToken('braintree', (client_token) => {
-      braintree.client.create({
-        authorization: client_token.attributes.token
-      }, (error, clientInstance) => {
-        that.clientInstance = clientInstance;
+    // Start by generating a Braintree client token.
+    submarine.api // eslint-disable-line no-undef
+      .generatePaymentProcessorClientToken('braintree', client_token => {
+        // Then, create a Braintree client instance.
+        braintree.client // eslint-disable-line no-undef
+          .create({
+            authorization: client_token.attributes.token
+          })
+          .then(clientInstance => {
+            that.clientInstance = clientInstance;
 
-        braintree.dataCollector.create({
-          client: clientInstance,
-          paypal: true
-        }, (error, dataCollectorInstance) => {
-          that.deviceData = dataCollectorInstance.deviceData;
-        });
-
-        braintree.paypalCheckout.create({
-          client: clientInstance
-        }, (error, paypalCheckoutInstance) => {
-          that.paypalCheckoutInstance = paypalCheckoutInstance;
-          window.paypalCheckoutInstance = paypalCheckoutInstance;
-
-          paypalCheckoutInstance.loadPayPalSDK({
-            vault: true
-          }, (error) => {
-            paypal.Buttons({
-              fundingSource: paypal.FUNDING.PAYPAL,
-              createBillingAgreement: that.createBillingAgreement.bind(that),
-              onApprove: that.onApprove.bind(that),
-              onCancel: that.onCancel.bind(that),
-              onError: that.onError.bind(that)
-            }).render('#braintree-paypal-mount').then(() => {
-              that.paypalButtonReady = true;
+            braintree.dataCollector.create({
+              client: clientInstance,
+              paypal: true
+            }).then(dataCollectorInstance => {
+              that.deviceData = dataCollectorInstance.deviceData;
             });
+
+            braintree.paypalCheckout.create({
+              client: clientInstance
+            }).then(paypalCheckoutInstance => {
+              that.paypalCheckoutInstance = paypalCheckoutInstance;
+              window.paypalCheckoutInstance = paypalCheckoutInstance;
+
+              paypalCheckoutInstance.loadPayPalSDK({
+                vault: true
+              }, (error) => {
+                paypal.Buttons({
+                  fundingSource: paypal.FUNDING.PAYPAL,
+                  createBillingAgreement: that.createBillingAgreement.bind(that),
+                  onApprove: that.onApprove.bind(that),
+                  onCancel: that.onCancel.bind(that),
+                  onError: that.onError.bind(that)
+                }).render('#braintree-paypal-mount').then(() => {
+                  that.paypalButtonReady = true;
+                  success();
+                });
+              });
+            });
+          })
+          .catch(error => {
+            failure(error);
           });
-        });
+      })
+      .catch(error => {
+        failure(error);
       });
-    });
   }
 
   createBillingAgreement() {
