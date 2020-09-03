@@ -138,16 +138,16 @@ export class BraintreePaypalShopPaymentMethod extends ShopPaymentMethod {
     this.$message.text(this.translations.payment_methods.shop_payment_methods.paypal_success);
   }
 
-  process(callbacks) {
+  process(success, error) {
     const that = this;
 
     setTimeout(() => {
       if (!that.billingAgreementNonce) {
-        callbacks.error({
-          message: that.setError(this.options.translations.paypal_error_not_approved)
-        });
+        error(this.options.translations.paypal_error_not_approved);
+        return;
       } else {
-        callbacks.success({
+        success({
+          shop_payment_method_id: this.data.id,
           customer_payment_method_id: null,
           payment_nonce: that.billingAgreementNonce,
           payment_method_type: 'paypal',
