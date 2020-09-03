@@ -157,17 +157,17 @@ export class BraintreePaypalShopPaymentMethod extends ShopPaymentMethod {
           }
         });
       }
-    }, 1);
+      });
   }
 
-  getRenderContext(html_templates) {
+  getRenderContext() {
     return {
       id: this.data.id,
       title: 'Paypal',
-      // subfields_content: renderHtmlTemplate({}, 'braintree_paypal_subfields_content', html_templates),
+      value: this.getValue(),
       subfields_content: this.options.html_templates.braintree_paypal_subfields_content,
-      icons: 'icons_paypal'
-    }
+      icon: 'icons_paypal'
+    };
   }
 
 }
