@@ -2,7 +2,13 @@ import { ShopPaymentMethod } from './shop_payment_method';
 
 export class BraintreePaypalShopPaymentMethod extends ShopPaymentMethod {
 
-  setup() {
+  beforeSetup() {
+    this.$subfields = this.$(
+      `[data-subfields-for-payment-method="shop_payment_method_${this.data.id}"]`
+    );
+  }
+
+  setup(success, failure) {
     const that = this;
 
     this.deviceData = null;
