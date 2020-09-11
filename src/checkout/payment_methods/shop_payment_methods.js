@@ -1,6 +1,7 @@
 import { ShopPaymentMethod } from './shop_payment_methods/shop_payment_method';
 import { BraintreeCreditCardShopPaymentMethod } from './shop_payment_methods/braintree_credit_card_shop_payment_method';
 import { BraintreeApplePayShopPaymentMethod } from './shop_payment_methods/braintree_apple_pay_shop_payment_method';
+import { BraintreePaypalShopPaymentMethod } from './shop_payment_methods/braintree_paypal_shop_payment_method';
 import { CybersourceCreditCardShopPaymentMethod } from './shop_payment_methods/cybersource_credit_card_shop_payment_method';
 import { StripeCreditCardShopPaymentMethod } from './shop_payment_methods/stripe_credit_card_shop_payment_method';
 import { KomojuCreditCardShopPaymentMethod } from './shop_payment_methods/komoju_credit_card_payment_method';
@@ -9,7 +10,8 @@ import { SubmarineBankTransferShopPaymentMethod } from './shop_payment_methods/s
 const SHOP_PAYMENT_METHODS = {
   braintree: {
     'credit-card': BraintreeCreditCardShopPaymentMethod,
-    'apple-pay': BraintreeApplePayShopPaymentMethod
+    'apple-pay': BraintreeApplePayShopPaymentMethod,
+    'paypal': BraintreePaypalShopPaymentMethod
   },
   cybersource: {
     'credit-card': CybersourceCreditCardShopPaymentMethod
