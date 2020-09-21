@@ -1,7 +1,6 @@
 import { ShopPaymentMethod } from './shop_payment_method';
 
 export class BraintreePaypalShopPaymentMethod extends ShopPaymentMethod {
-
   beforeSetup() {
     this.$subfields = this.$(
       `[data-subfields-for-payment-method="shop_payment_method_${this.data.id}"]`
@@ -74,7 +73,9 @@ export class BraintreePaypalShopPaymentMethod extends ShopPaymentMethod {
 
     return this.paypalCheckoutInstance.createPayment({
       flow: 'vault',
-      billingAgreementDescription: that.translations.payment_methods.shop_payment_methods.paypal.paypal_billing_agreement_description,
+      billingAgreementDescription: that.t(
+        'payment_methods.shop_payment_methods.paypal.billing_agreement_description'
+      ),
       enableShippingAddress: true,
       shippingAddressEditable: false,
       shippingAddressOverride: {
@@ -95,7 +96,7 @@ export class BraintreePaypalShopPaymentMethod extends ShopPaymentMethod {
 
     return this.paypalCheckoutInstance.tokenizePayment(data, (error, payload) => {
       if (error) {
-        that.setError(this.translations.payment_methods.shop_payment_methods.paypal_error_unknown);
+        that.setError(this.t('payment_methods.shop_payment_methods.paypal.error_unknown'));
         return;
       }
 
@@ -110,16 +111,28 @@ export class BraintreePaypalShopPaymentMethod extends ShopPaymentMethod {
 
   onError(error) {
     this.billingAgreementNonce = null;
-    this.setError(this.translations.payment_methods.shop_payment_methods.paypal_error_unknown);
+    this.setError(
+      this.t('payment_methods.shop_payment_methods.paypal.error_unknown')
+    );
   }
 
   validate() {
     if (!this.paypalButtonReady) {
-      return [this.setError(this.translations.payment_methods.shop_payment_methods.paypal_error_not_ready)];
+      return [
+        this.setError(
+          this.t('payment_methods.shop_payment_methods.paypal.error_not_ready')
+        )
+      ];
     }
 
     if (!this.billingAgreementNonce) {
-      return [this.setError(this.translations.payment_methods.shop_payment_methods.paypal_error_not_approved)];
+      return [
+        this.setError(
+          this.t(
+            'payment_methods.shop_payment_methods.paypal.error_not_approved'
+          )
+        )
+      ];
     }
 
     return [];
@@ -128,14 +141,19 @@ export class BraintreePaypalShopPaymentMethod extends ShopPaymentMethod {
   setError(message) {
     this.$container.removeClass('braintree-paypal--has-success');
     this.$container.toggleClass('braintree-paypal--has-error', !!message);
-    this.$message.text(message || this.translations.payment_methods.shop_payment_methods.paypal.paypal_instructions);
+    this.$message.text(
+      message ||
+        this.t('payment_methods.shop_payment_methods.paypal.instructions')
+    );
     return message;
   }
 
   setSuccess() {
     this.$container.removeClass('braintree-paypal--has-error');
     this.$container.addClass('braintree-paypal--has-success');
-    this.$message.text(this.translations.payment_methods.shop_payment_methods.paypal_success);
+    this.$message.text(
+      this.t('payment_methods.shop_payment_methods.paypal.success')
+    );
   }
 
   process(success, error) {
@@ -143,8 +161,11 @@ export class BraintreePaypalShopPaymentMethod extends ShopPaymentMethod {
 
     setTimeout(() => {
       if (!that.billingAgreementNonce) {
-        error(this.options.translations.paypal_error_not_approved);
-        return;
+        error(
+          this.t(
+            'payment_methods.shop_payment_methods.paypal.error_not_approved'
+          )
+        );
       } else {
         success({
           shop_payment_method_id: this.data.id,
@@ -157,17 +178,16 @@ export class BraintreePaypalShopPaymentMethod extends ShopPaymentMethod {
           }
         });
       }
-      });
+    });
   }
 
   getRenderContext() {
     return {
       id: this.data.id,
-      title: 'Paypal',
+      title: this.t('payment_methods.shop_payment_methods.paypal.title'),
       value: this.getValue(),
       subfields_content: this.options.html_templates.braintree_paypal_subfields_content,
       icon: 'icons_paypal'
     };
   }
-
 }
