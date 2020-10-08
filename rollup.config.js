@@ -40,6 +40,13 @@ const config = {
       name: 'SubmarineJS',
       plugins: [terser()],
       globals
+    },
+    {
+      file: 'dist/submarine.iife.js',
+      format: 'iife',
+      name: 'SubmarineJS',
+      indent: false,
+      plugins: [terser()]
     }
   ],
   external: Object.keys(pkg.dependencies).concat(['fs', 'path']),
