@@ -44,12 +44,13 @@ const config = {
     {
       file: 'dist/submarine.iife.js',
       format: 'iife',
-      name: 'SubmarineJS',
+      name: 'submarineJS',
       indent: false,
-      plugins: [terser()]
+      plugins: [terser()],
+      globals
     }
   ],
-  external: Object.keys(pkg.dependencies).concat(['fs', 'path']),
+  external: Object.keys(pkg.dependencies).concat(['fs', 'path']), // Remove this to bundle external dependencies
   plugins: [
     commonjs({
       include: /node_modules/
