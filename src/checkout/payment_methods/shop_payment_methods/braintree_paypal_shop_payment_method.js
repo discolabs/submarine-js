@@ -68,27 +68,34 @@ export class BraintreePaypalShopPaymentMethod extends ShopPaymentMethod {
 
   createBillingAgreement() {
     const that = this;
+    const shippingAddress = that.options.checkout ? that.options.checkout.shipping_address : null;
 
     this.setError();
 
-    return this.paypalCheckoutInstance.createPayment({
+    const createPaymentOptions = {
       flow: 'vault',
       billingAgreementDescription: that.t(
         'payment_methods.shop_payment_methods.paypal.billing_agreement_description'
       ),
-      enableShippingAddress: true,
-      shippingAddressEditable: false,
-      shippingAddressOverride: {
-        recipientName: that.options.checkout.shipping_address.name,
-        line1: that.options.checkout.shipping_address.address1,
-        line2: that.options.checkout.shipping_address.address2,
-        city: that.options.checkout.shipping_address.city,
-        countryCode: that.options.checkout.shipping_address.country_code,
-        postalCode: that.options.checkout.shipping_address.zip,
-        state: that.options.checkout.shipping_address.province_code,
-        phone: that.options.checkout.shipping_address.phone
-      }
-    });
+      enableShippingAddress: false,
+      shippingAddressEditable: false
+    };
+
+    if (shippingAddress) {
+      createPaymentOptions.enableShippingAddress = true;
+      createPaymentOptions.shippingAddressOverride = {
+        recipientName: shippingAddress.name,
+        line1: shippingAddress.address1,
+        line2: shippingAddress.address2,
+        city: shippingAddress.city,
+        countryCode: shippingAddress.country_code,
+        postalCode: shippingAddress.zip,
+        state: shippingAddress.province_code,
+        phone: shippingAddress.phone
+      };
+    }
+
+    return this.paypalCheckoutInstance.createPayment(createPaymentOptions);
   }
 
   onApprove(data, actions) {
