@@ -37,7 +37,6 @@ export class BraintreeCreditCardShopPaymentMethod extends ShopPaymentMethod {
             this.$subfields.addClass(
               'card-fields-container--loaded card-fields-container--transitioned'
             );
-            this.$subfields.find('iframe').css({ height: '44px' });
 
             success();
           })
