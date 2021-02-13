@@ -4,6 +4,19 @@ const NUMBER_ERROR = 'Please enter a valid card number';
 const EXPIRATION_DATE_ERROR = 'Please enter a valid expiration date';
 const CVV_ERROR = 'Please enter a valid CVV';
 
+const DEFAULT_HOSTED_FIELDS_OPTIONS = {
+  styles: {
+    input: {
+      color: '#333333',
+      margin: '-1px 0 0 0',
+      padding: '0.94em 0.8em',
+      'font-size': '14px',
+      'font-family':
+        '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif'
+    }
+  }
+};
+
 export class BraintreeCreditCardShopPaymentMethod extends ShopPaymentMethod {
   beforeSetup() {
     this.$subfields = this.$(
@@ -50,18 +63,14 @@ export class BraintreeCreditCardShopPaymentMethod extends ShopPaymentMethod {
   }
 
   getHostedFieldsOptions(clientInstance) {
+    const additionalOptions =
+      this.options.braintree && this.options.braintree.hostedFieldsOptions
+        ? this.options.braintree.hostedFieldsOptions
+        : DEFAULT_HOSTED_FIELDS_OPTIONS;
+
     return {
+      ...additionalOptions,
       client: clientInstance,
-      styles: {
-        input: {
-          color: '#333333',
-          margin: '-1px 0 0 0',
-          padding: '0.94em 0.8em',
-          'font-size': '14px',
-          'font-family':
-            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif'
-        }
-      },
       fields: this.creditCardFields()
     };
   }
