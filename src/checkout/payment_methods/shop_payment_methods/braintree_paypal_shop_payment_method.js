@@ -197,4 +197,12 @@ export class BraintreePaypalShopPaymentMethod extends ShopPaymentMethod {
       icon: 'icons_paypal'
     };
   }
+
+  getRenderTemplate() {
+    if (this.options.html_templates.shop_payment_method_braintree_paypal) {
+      return 'shop_payment_method_braintree_paypal';
+    }
+
+    return 'shop_payment_method';
+  }
 }

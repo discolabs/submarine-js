@@ -125,6 +125,14 @@ export class BraintreeCreditCardShopPaymentMethod extends ShopPaymentMethod {
     };
   }
 
+  getRenderTemplate() {
+    if (this.options.html_templates.shop_payment_method_braintree_credit_card) {
+      return 'shop_payment_method_braintree_credit_card';
+    }
+
+    return 'shop_payment_method';
+  }
+
   subfieldsContent() {
     return this.isSingleUse()
       ? this.options.html_templates
