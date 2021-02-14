@@ -42,7 +42,8 @@ export class BraintreePaypalShopPaymentMethod extends ShopPaymentMethod {
               window.paypalCheckoutInstance = paypalCheckoutInstance;
 
               paypalCheckoutInstance.loadPayPalSDK({
-                vault: true
+                vault: true,
+                intent: 'tokenize'
               }, (error) => {
                 paypal.Buttons({
                   fundingSource: paypal.FUNDING.PAYPAL,
@@ -74,6 +75,7 @@ export class BraintreePaypalShopPaymentMethod extends ShopPaymentMethod {
 
     const createPaymentOptions = {
       flow: 'vault',
+      intent: 'tokenize',
       billingAgreementDescription: that.t(
         'payment_methods.shop_payment_methods.paypal.billing_agreement_description'
       ),
