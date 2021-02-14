@@ -9,10 +9,13 @@ const DEFAULT_HOSTED_FIELDS_OPTIONS = {
     input: {
       color: '#333333',
       margin: '-1px 0 0 0',
-      padding: '0.94em 0.8em',
+      padding: '0.9285714286em 0.7857142857em',
       'font-size': '14px',
       'font-family':
         '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif'
+    },
+    '::-webkit-input-placeholder': {
+      color: '#737373'
     }
   }
 };
