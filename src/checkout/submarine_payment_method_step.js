@@ -203,15 +203,7 @@ export class SubmarinePaymentMethodStep extends CustardModule {
   }
 
   onShopifyGatewayChange() {
-    const $selectedShopifyGatewayInput = this.$element.find(
-      `${SHOPIFY_GATEWAY_INPUT_SELECTOR}:checked`
-    );
-    const $selectedShopifyGatewayElement = $selectedShopifyGatewayInput.closest(
-      '[data-select-gateway]'
-    );
-    this.selectedShopifyGatewayId = $selectedShopifyGatewayElement.attr(
-      'data-select-gateway'
-    );
+    this.selectedShopifyGatewayId = this.getSelectedShopifyGatewayId();
 
     // If the gateway that was selected isn't Submarine, ensure that Submarine payment methods are unselected.
     if (!this.submarineGatewayIsSelected()) {
@@ -279,6 +271,22 @@ export class SubmarinePaymentMethodStep extends CustardModule {
     );
   }
 
+  getSelectedShopifyGatewayId() {
+    if (this.submarineIsOnlyPaymentGateway()) {
+      return this.options.submarine.submarine_gateway_id;
+    }
+
+    const $selectedShopifyGatewayInput = this.$element.find(
+      `${SHOPIFY_GATEWAY_INPUT_SELECTOR}:checked`
+    );
+
+    const $selectedShopifyGatewayElement = $selectedShopifyGatewayInput.closest(
+      '[data-select-gateway]'
+    );
+
+    return $selectedShopifyGatewayElement.attr('data-select-gateway');
+  }
+
   submarineGatewayIsSelected() {
     return (
       this.selectedShopifyGatewayId ===
@@ -287,10 +295,13 @@ export class SubmarinePaymentMethodStep extends CustardModule {
   }
 
   submarineIsOnlyPaymentGateway() {
-    return (
-      this.$element.find(`${SHOPIFY_GATEWAY_INPUT_SELECTOR}`).attr('type') ===
-      'hidden'
-    );
+    if (this.cacheSubmarineIsOnlyPaymentGateway === undefined) {
+      this.cacheSubmarineIsOnlyPaymentGateway =
+        this.$element.find(`${SHOPIFY_GATEWAY_INPUT_SELECTOR}`).attr('type') ===
+        'hidden';
+    }
+
+    return this.cacheSubmarineIsOnlyPaymentGateway;
   }
 
   sortGatewaysAndPaymentMethods() {
