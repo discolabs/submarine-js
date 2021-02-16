@@ -1,7 +1,7 @@
 # Upgrading
 This file contains instructions for anyone upgrading a project from one version of Submarine.js to the next.
 
-## Upgrading from 0.3.2 to Unreleased
+## Upgrading from 0.3.2 to 0.3.3
 
 ### Changes for Braintree hosted field widget
 There were a couple of changes related to the styling of hosted fields in the Braintree credit card widget.
