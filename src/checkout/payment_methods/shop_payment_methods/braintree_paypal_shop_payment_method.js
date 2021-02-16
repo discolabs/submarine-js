@@ -42,7 +42,8 @@ export class BraintreePaypalShopPaymentMethod extends ShopPaymentMethod {
               window.paypalCheckoutInstance = paypalCheckoutInstance;
 
               paypalCheckoutInstance.loadPayPalSDK({
-                vault: true
+                vault: true,
+                intent: 'tokenize'
               }, (error) => {
                 paypal.Buttons({
                   fundingSource: paypal.FUNDING.PAYPAL,
@@ -74,6 +75,7 @@ export class BraintreePaypalShopPaymentMethod extends ShopPaymentMethod {
 
     const createPaymentOptions = {
       flow: 'vault',
+      intent: 'tokenize',
       billingAgreementDescription: that.t(
         'payment_methods.shop_payment_methods.paypal.billing_agreement_description'
       ),
@@ -196,5 +198,13 @@ export class BraintreePaypalShopPaymentMethod extends ShopPaymentMethod {
       subfields_content: this.options.html_templates.braintree_paypal_subfields_content,
       icon: 'icons_paypal'
     };
+  }
+
+  getRenderTemplate() {
+    if (this.options.html_templates.shop_payment_method_braintree_paypal) {
+      return 'shop_payment_method_braintree_paypal';
+    }
+
+    return 'shop_payment_method';
   }
 }
