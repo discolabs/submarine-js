@@ -421,6 +421,8 @@ export class SubmarinePaymentMethodStep extends CustardModule {
 
   onPaymentMethodProcessingSuccess(payment_method_data) {
     payment_method_data.checkout_id = this.options.checkout.id;
+    payment_method_data.presentment_total_price = this.options.checkout.total_price;
+    payment_method_data.presentment_currency = this.options.checkout.currency;
     payment_method_data.customer_id =
       this.options.customer && this.options.customer.id;
     this.submarine.api.createPreliminaryPaymentMethod(
