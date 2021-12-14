@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Dashboard } from "./pages/Dashboard";
-import { Subscriptions } from "./pages/Subscriptions";
-import { PaymentMethods } from "./pages/PaymentMethods";
+import { Dashboard } from "./Dashboard";
+import { Subscriptions } from "./Subscriptions";
+import { PaymentMethods } from "./PaymentMethods";
 
 const PAGES = {
   "Dashboard": Dashboard,
@@ -34,7 +34,7 @@ const PortalContent = ({ submarine, currentPage }) => {
   return <PageComponent submarine={submarine} />;
 };
 
-const Portal = ({ submarine }) => {
+const App = ({ submarine }) => {
   const [currentPage, setPage] = useState('Dashboard');
 
   return (
@@ -48,4 +48,4 @@ const Portal = ({ submarine }) => {
   );
 };
 
-export default Portal;
+export default App;
