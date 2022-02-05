@@ -1,5 +1,14 @@
 {
   "name": "submarine-js",
+  "files": ["dist"],
+  "main": "./dist/submarine.umd.js",
+  "module": "./dist/submarine.es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/submarine.es.js",
+      "require": "./dist/submarine.umd.js"
+    }
+  },
   "version": "2.0.0",
   "scripts": {
     "dev": "vite",
@@ -7,6 +16,7 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@vitejs/plugin-legacy": "^1.6.4",
     "@vitejs/plugin-react": "^1.0.7",
     "js-sha256": "^0.9.0",
     "react": "^17.0.2",
