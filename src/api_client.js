@@ -114,7 +114,8 @@ export class ApiClient {
       body: payload
     })
       .then(response => response.json())
-      .then(json => callback && callback(json.data));
+      .then(json => this.models.sync(json))
+      .then(models => callback && callback(models));
   }
 
   // Build query parameters for a given request, including authentication information.
