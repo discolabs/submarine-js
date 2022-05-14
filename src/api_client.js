@@ -47,10 +47,6 @@ const API_METHODS = {
     http_method: DELETE,
     endpoint: '/customers/{{ customer_id }}/subscriptions/{{ id }}.json'
   },
-  get_products: {
-    http_method: GET,
-    endpoint: '/products.json'
-  },
   generate_payment_processor_client_token: {
     http_method: POST,
     endpoint: '/payment_processor_client_tokens.json'
@@ -113,9 +109,23 @@ export class ApiClient {
       },
       body: payload
     })
-      .then(response => response.json())
-      .then(json => this.models.sync(json))
-      .then(models => callback && callback(models));
+      .then(response => {
+        response.json()
+          .then(json => {
+            if(json && json.errors) {
+              callback && callback(null, json.errors);
+              return;
+            }
+
+            if(response.status === 400 || response.status === 422 || response.status === 500) {
+              callback && callback(null, [json]);
+              return;
+            }
+
+            const result = this.models.sync(json);
+            callback && callback(result, null);
+          });
+      });
   }
 
   // Build query parameters for a given request, including authentication information.
