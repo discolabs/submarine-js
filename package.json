@@ -6,8 +6,11 @@
     "build": "vite build",
     "serve": "vite preview"
   },
-  "dependencies": {},
+  "dependencies": {
+    "json-api-models": "^0.1.0-beta.7"
+  },
   "devDependencies": {
+    "js-sha256": "^0.9.0",
     "vite": "^2.9.9"
   }
 }

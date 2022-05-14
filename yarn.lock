@@ -152,6 +152,16 @@ is-core-module@^2.8.1:
   dependencies:
     has "^1.0.3"
 
+js-sha256@^0.9.0:
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/js-sha256/-/js-sha256-0.9.0.tgz#0b89ac166583e91ef9123644bd3c5334ce9d0966"
+  integrity sha512-sga3MHh9sgQN2+pJ9VYZ+1LPwXOxuBJBA5nrR5/ofPfuiJBE2hnjsaN8se8JznOmGLN2p49Pe5U/ttafcs/apA==
+
+json-api-models@^0.1.0-beta.7:
+  version "0.1.0-beta.7"
+  resolved "https://registry.yarnpkg.com/json-api-models/-/json-api-models-0.1.0-beta.7.tgz#26e3a4d42c0f95969d56db3d7ffa48011e1be86d"
+  integrity sha512-S6ZiaXap713Kdc0B1a3t+RJ+AGxUgJPqe+vzGwp/h8/BRoSybcUwin6PiGlePi+CUAF4wVhDxFu+sXa+00cYrQ==
+
 nanoid@^3.3.3:
   version "3.3.4"
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.4.tgz#730b67e3cd09e2deacf03c027c81c9d9dbc5e8ab"
