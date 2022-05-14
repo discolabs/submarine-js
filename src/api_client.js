@@ -47,6 +47,10 @@ const API_METHODS = {
     http_method: DELETE,
     endpoint: '/customers/{{ customer_id }}/subscriptions/{{ id }}.json'
   },
+  create_upsell: {
+    http_method: POST,
+    endpoint: '/customers/{{ customer_id }}/orders/{{ order_id }}/upsells.json'
+  },
   generate_payment_processor_client_token: {
     http_method: POST,
     endpoint: '/payment_processor_client_tokens.json'
@@ -233,6 +237,25 @@ export class ApiClient {
     return this.execute(
       'duplicate_subscription',
       {},
+      context,
+      callback
+    );
+  }
+
+  // Create an upsell for the specified order.
+  createUpsell(order_id, upsell, callback) {
+    const context = { ...this.authentication, order_id };
+
+    const payload = {
+      data: {
+        type: 'upsell',
+        attributes: upsell
+      }
+    };
+
+    return this.execute(
+      'create_upsell',
+        payload,
       context,
       callback
     );
