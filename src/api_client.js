@@ -3,6 +3,7 @@ import { Store } from 'json-api-models';
 // Constants for possible HTTP methods.
 const GET = 'get';
 const POST = 'post';
+const PATCH = 'patch';
 const PUT = 'put';
 const DELETE = 'delete';
 
@@ -22,6 +23,14 @@ const API_METHODS = {
   create_payment_method: {
     http_method: POST,
     endpoint: '/customers/{{ customer_id }}/payment_methods.json'
+  },
+  get_payment_method: {
+    http_method: GET,
+    endpoint: '/customers/{{ customer_id }}/payment_methods/{{ id }}.json'
+  },
+  update_payment_method: {
+    http_method: PATCH,
+    endpoint: '/customers/{{ customer_id }}/payment_methods/{{ id }}.json'
   },
   remove_payment_method: {
     http_method: DELETE,
@@ -195,6 +204,30 @@ export class ApiClient {
     );
   }
 
+  // Get the specified payment method for the currently authenticated customer.
+  getPaymentMethod(id, callback) {
+    const context = { ...this.authentication, id };
+
+    return this.execute(
+      'get_payment_method',
+      {},
+      context,
+      callback
+    );
+  }
+
+  // Update the specified payment method for the currently authenticated customer.
+  updatePaymentMethod(id, paymentMethod, callback) {
+    const context = { ...this.authentication, id };
+
+    return this.execute(
+      'update_payment_method',
+      paymentMethod,
+      context,
+      callback
+    );
+  }
+
   // Remove the specified payment method for the currently authenticated customer.
   removePaymentMethod(id, callback) {
     const context = { ...this.authentication, id };
@@ -207,18 +240,6 @@ export class ApiClient {
     );
   }
 
-  // Get a specific subscription.
-  getSubscription(id, callback) {
-    const context = { ...this.authentication, id };
-
-    return this.execute(
-        'get_subscription',
-        {},
-        context,
-        callback
-    );
-  }
-
   // Get a list of subscriptions for the currently authenticated customer.
   getSubscriptions(callback, params = {}) {
     const context = { ...this.authentication };
@@ -226,18 +247,6 @@ export class ApiClient {
     return this.execute(
       'get_subscriptions',
       { ...params },
-      context,
-      callback
-    );
-  }
-
-  // Update the specified subscription for the currently authenticated customer.
-  updateSubscription(id, subscription, callback) {
-    const context = { ...this.authentication, id };
-
-    return this.execute(
-      'update_subscription',
-      subscription,
       context,
       callback
     );
@@ -262,8 +271,34 @@ export class ApiClient {
     );
   }
 
+  // Get a specific subscription for the currently authenticated customer.
+  getSubscription(id, callback) {
+    const context = { ...this.authentication, id };
+
+    return this.execute(
+      'get_subscription',
+      {},
+      context,
+      callback
+    );
+  }
+
+  // Update the specified subscription for the currently authenticated customer.
+  updateSubscription(id, subscription, callback) {
+    const context = { ...this.authentication, id };
+
+    return this.execute(
+      'update_subscription',
+      subscription,
+      context,
+      callback
+    );
+  }
+
   // Cancel the specified subscription for the currently authenticated customer.
   cancelSubscription(id, callback) {
+    console.log('[Warning]: Calling the `cancelSubscription` method is deprecated in favour of calling `updateSubscription` with a `status` value of `cancelled`.');
+
     const context = { ...this.authentication, id };
 
     return this.execute(
