@@ -27,6 +27,10 @@ const API_METHODS = {
     http_method: DELETE,
     endpoint: '/customers/{{ customer_id }}/payment_methods/{{ id }}.json'
   },
+  get_subscription: {
+    http_method: GET,
+    endpoint: '/customers/{{ customer_id }}/subscriptions/{{ id }}.json'
+  },
   get_subscriptions: {
     http_method: GET,
     endpoint: '/customers/{{ customer_id }}/subscriptions.json'
@@ -88,6 +92,34 @@ const getMethodPayload = (http_method, data) => {
   return JSON.stringify(data);
 };
 
+// Synchronise a top-level data object returned from a JSON API.
+const synchroniseData = (models, data) => {
+  // if the data object isn't a JSON-API object, return as-is
+  if(data === null || data === undefined || typeof data !== 'object' || data.data === undefined) {
+    return data;
+  }
+
+  // we know we have a data array or singular data object, so synchronise it
+  const synchronisedData = models.sync(data);
+
+  // synchronise the individual attributes of the now locally synchronised model
+  if(Array.isArray(synchronisedData)) {
+    synchronisedData.forEach(model => synchroniseModelAttributes(models, model));
+  } else {
+    synchroniseModelAttributes(models, synchronisedData);
+  }
+
+  // return the top-level object
+  return synchronisedData;
+};
+
+// Iterate through the individual attributes of a JSON API model and parse/sync them.
+const synchroniseModelAttributes = (models, model) => {
+  Object.keys(model.attributes).forEach(attribute => {
+    model.attributes[attribute] = synchroniseData(models, model.attributes[attribute]);
+  });
+};
+
 // The API client class.
 export class ApiClient {
 
@@ -126,7 +158,7 @@ export class ApiClient {
               return;
             }
 
-            const result = this.models.sync(json);
+            const result = synchroniseData(this.models, json);
             callback && callback(result, null);
           });
       });
@@ -172,6 +204,18 @@ export class ApiClient {
       {},
       context,
       callback
+    );
+  }
+
+  // Get a specific subscription.
+  getSubscription(id, callback) {
+    const context = { ...this.authentication, id };
+
+    return this.execute(
+        'get_subscription',
+        {},
+        context,
+        callback
     );
   }
 
