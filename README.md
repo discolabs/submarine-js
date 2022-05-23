@@ -36,7 +36,7 @@ import { Submarine } from 'submarine-js';
 The Submarine.js library provides a `Submarine` class, which should be initialised with environmental context so that API calls can successfully be made:
 
 ```js
-const submarine = new Submarine({
+const submarine = new Submarine.Submarine({
   environment: "staging",
   authentication: {
     customer_id: "6211133636859",
@@ -72,7 +72,7 @@ Here's an example of how you can initialised the Submarine client library within
 {% assign api_signature = api_data | hmac_sha256: shop.metafields.submarine.customer_api_secret %}
 
 <script>
-  window.submarine = new Submarine({
+  window.submarine = new Submarine.Submarine({
     environment: "production",
     authentication: {
       customer_id: "{{ customer.id }}",
