@@ -10,7 +10,7 @@ Depending on how you're building your Shopify theme, you can integrate Submarine
 The first (and simplest) is to import the client library on the pages you want to interact with Submarine via a `<script>` tag, for example:
 
 ```html
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@discolabs/submarine-js@0.4.0-beta.0/dist/submarine.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@discolabs/submarine-js@0.4.0-beta.1/dist/submarine.js"></script>
 ```
 
 Alternatively, if you're using your own build process for your theme via Webpacker or similar, you can add Submarine.js as a dependency to your project and import it:
@@ -65,7 +65,7 @@ For Shopify themes, these values should be generated within your Liquid template
 Here's an example of how you can initialised the Submarine client library within a Liquid template in your Shopify theme:
 
 ```liquid
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@discolabs/submarine-js@0.4.0-beta.0/dist/submarine.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@discolabs/submarine-js@0.4.0-beta.1/dist/submarine.js"></script>
 
 {% assign api_timestamp = 'now' | date: '%s' %}
 {% assign api_data = customer.id | append: ':' | append: api_timestamp %}
