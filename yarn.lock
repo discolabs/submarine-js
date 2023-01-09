@@ -878,9 +878,9 @@ lodash@^4.17.13, lodash@^4.17.14, lodash@^4.17.15:
   integrity sha512-JNvd8XER9GQX0v2qJgsaN/mzFCNA5BRe/j8JN9d+tWyGLSodKQHKFicdwNYzWwI3wjRnaKPsGj1XkBjx/F96DQ==
 
 luxon@^1.23.0:
-  version "1.23.0"
-  resolved "https://registry.yarnpkg.com/luxon/-/luxon-1.23.0.tgz#23b748ad0f2d5494dc4d2878c19278c1e651410c"
-  integrity sha512-+6a/bXsCWrrR8vfbL41iM92es12zwV2Rum/KPkT+ubOZnnU3Sqbqok/FmD1xsWlWN2Y9Hu0fU/vNgU24ns7bpA==
+  version "1.28.1"
+  resolved "https://registry.yarnpkg.com/luxon/-/luxon-1.28.1.tgz#528cdf3624a54506d710290a2341aa8e6e6c61b0"
+  integrity sha512-gYHAa180mKrNIUJCbwpmD0aTu9kV0dREDrwNnuyFAsO1Wt0EVYSZelPnJlbj9HplzXX/YWXHFTL45kvZ53M0pw==
 
 mimic-fn@^2.1.0:
   version "2.1.0"
